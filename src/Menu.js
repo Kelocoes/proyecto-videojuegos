@@ -8,7 +8,7 @@ class Menu extends Phaser.Scene {
 
     preload () {
         this.load.image('fondoMenu','assets/img/scene/fondoMenu.jpg')
-        this.load.image('playButton', 'assets/img/scene/playButton')
+        this.load.image('playButton', 'assets/img/scene/playButton.png')
     }
 
     create () {
