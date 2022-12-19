@@ -1,5 +1,5 @@
 class Juego extends Phaser.Scene {
-    
+
     constructor () {
         super({key: 'juego'});
         this.bd = undefined;
@@ -8,12 +8,15 @@ class Juego extends Phaser.Scene {
         this.gameTimeMin = 0;
         this.worldSizeWidth = 2000;
         this.worldSizeHeigth = 2000;
-        
+        this.enemigos = [];
+
     }
 
     preload () {
         this.load.image('piso', 'assets/img/scene/floor.png');
-        this.load.spritesheet('user','assets/img/player/Capuchirri.png',{frameWidth: 128,frameHeight:131,endFrame:1})
+        this.load.spritesheet('user','assets/img/player/Capuchirri.png',{frameWidth: 128,frameHeight:131,endFrame:1});
+        this.load.image('taxi', 'assets/img/player/taxi.png');
+
     }
 
     create () {
@@ -41,22 +44,41 @@ class Juego extends Phaser.Scene {
         //Se sigue al personaje con la camara
         this.cameras.main.startFollow(this.player);
 
+        // Spawn de enemigo: Taxi:
+        for (let i = 0; i < 5; i++) {
+            let taxi = new Taxi({scene: this, posx: 1000+ (i*10), posy: 1000+ (i*10), key: 'taxi'})
+            this.enemigos.push(taxi);
+        }
+        /*
+        this.taxi = new Taxi({scene: this, posx: 1000, posy: 1000, key: 'taxi'});
+        this.taxi.setScale(0.1);
+        this.physics.world.enable(this.taxi)
+        */
         this.time.addEvent({ delay: 1000, callback:this.addTime, callbackScope: this, loop: true });
 
         this.cursors = this.input.keyboard.createCursorKeys();
         //Se asigna scrollFactor 0 para no mover el texto con la camara
         this.timeText = this.add.text(20,20, this.gameTime, { fontFamily : 'pixelicWar', fill: '#ffffff'}).setFontSize(45).setScrollFactor(0);
-    } 
+    }
 
     update () {
         this.movementKeys()
+        this.enemigosSigue()
 
+
+    }
+
+    enemigosSigue () {
+        for (let i = 0; i < this.enemigos.length; i++) {
+            this.physics.moveToObject(this.enemigos[i], this.player, this.enemigos[i].getVelocidad());
+        }
     }
 
     movementKeys () {
         //Se realizan movimientos del personaje por medio de velocidades ya que hace parte de las fisicas
         //Se mueve como un vector
         this.player.setVelocity(0);
+        // console.log(this.player.body.position.x, this.player.body.position.y)
 
         if (this.cursors.left.isDown) {
             this.player.setVelocityX(-300);
@@ -77,7 +99,6 @@ class Juego extends Phaser.Scene {
     }
 
     addTime(){
-
         this.gameTimeSec += 1;
         // console.log(this.gameTimeSec)
         if (this.gameTimeSec > 59) {
@@ -85,8 +106,6 @@ class Juego extends Phaser.Scene {
             this.gameTimeMin += 1
         }
         this.timeText.setText(this.gameTimeMin +' : '+ this.gameTimeSec)
-
-
     }
 
 }
