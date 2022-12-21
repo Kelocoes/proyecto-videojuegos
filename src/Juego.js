@@ -8,7 +8,7 @@ class Juego extends Phaser.Scene {
         this.gameTimeMin = 0;
         this.worldSizeWidth = 2000;
         this.worldSizeHeigth = 2000;
-        this.enemigos = [];
+        this.enemigos;
 
     }
 
@@ -44,11 +44,13 @@ class Juego extends Phaser.Scene {
         //Se sigue al personaje con la camara
         this.cameras.main.startFollow(this.player);
 
+        this.enemigos = this.physics.add.group()
         // Spawn de enemigo: Taxi:
         for (let i = 0; i < 5; i++) {
-            let taxi = new Taxi({scene: this, posx: 1000+ (i*10), posy: 1000+ (i*10), key: 'taxi'})
-            this.enemigos.push(taxi);
+            let taxi = new Taxi({scene: this, posx: 1000+ (i*100), posy: 1000+ (i*100), key: 'taxi'})
+            this.enemigos.add(taxi);
         }
+        this.physics.add.collider(this.enemigos, this.enemigos);
         /*
         this.taxi = new Taxi({scene: this, posx: 1000, posy: 1000, key: 'taxi'});
         this.taxi.setScale(0.1);
@@ -64,13 +66,13 @@ class Juego extends Phaser.Scene {
     update () {
         this.movementKeys()
         this.enemigosSigue()
-
-
     }
 
     enemigosSigue () {
-        for (let i = 0; i < this.enemigos.length; i++) {
-            this.physics.moveToObject(this.enemigos[i], this.player, this.enemigos[i].getVelocidad());
+        for (let i = 0; i < this.enemigos.getChildren().length; i++) {
+            this.physics.moveToObject(this.enemigos.getChildren()[i], this.player, this.enemigos.getChildren()[i].getVelocidad());
+
+            console.log(this.enemigos.getChildren()[i], this.enemigos.getChildren()[i].getVelocidad(), 'POR QUE NO FUNCIONAAA');
         }
     }
 

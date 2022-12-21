@@ -1,11 +1,10 @@
-class Enemigo extends Phaser.GameObjects.Sprite {
+class Enemigo extends Phaser.Physics.Arcade.Sprite {
     constructor(config) {
         super(config.scene, config.posx, config.posy, config.key);
 
         // Añade fisicas de la escena
         config.scene.physics.world.enable(this);
         config.scene.add.existing(this);
-
         // vida
         this.maxHP = config.maxHP;
         this.hp = this.maxHP;
