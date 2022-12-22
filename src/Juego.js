@@ -88,7 +88,7 @@ class Juego extends Phaser.Scene {
 
     preload () {
         this.load.image('piso', 'assets/img/scene/floorTile2.png');
-        this.load.spritesheet('user','assets/img/player/Capuchirri.png',{frameWidth: 128,frameHeight:131,endFrame:1})
+        this.load.spritesheet('user','assets/img/player/Capuchirri.png',{frameWidth: 128,frameHeight:130,endFrame:1})
         this.load.image('bag', 'assets/img/scene/bag.png')
     }
 
