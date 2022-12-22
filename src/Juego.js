@@ -1,3 +1,90 @@
+class SeleccionObjeto extends Phaser.Scene {
+    constructor () {
+        super({key: 'seleccion'});
+        this.bg = undefined
+        this.objects = undefined
+        this.graphics = undefined
+        this.zones = []
+    }
+
+
+    preload() {
+        this.load.image('bg', 'assets/img/scene/selectionbg.png')
+        this.load.image('playButton', 'assets/img/scene/playButton')
+    }
+
+    create (data) {
+        self = this
+        this.bg = this.add.image(400, 300, 'bg');
+        this.bg.setScale(0.5)
+
+        this.graphics = this.add.graphics();
+        this.graphics.lineStyle(2, 0xffffff);
+
+        this.random()
+
+        this.input.on('gameobjectdown', function (pointer, gameObject) {
+            console.log(gameObject.name)
+            data.objetos.push(gameObject.name)
+            self.scene.resume('juego')
+            self.scene.remove('seleccion')
+        });
+
+        this.input.on('gameobjectover', function (pointer, gameObject) {
+            self.graphics.lineStyle(2, 0x0000000);
+            self.graphics.strokeRect(self.zones[gameObject.name.pos].x , self.zones[gameObject.name.pos].y , self.zones[gameObject.name.pos].input.hitArea.width, self.zones[gameObject.name.pos].input.hitArea.height)
+        });
+
+        this.input.on('gameobjectout', function (pointer, gameObject) {
+            self.graphics.lineStyle(2, 0xffffff);
+            self.graphics.strokeRect(self.zones[gameObject.name.pos].x , self.zones[gameObject.name.pos].y , self.zones[gameObject.name.pos].input.hitArea.width, self.zones[gameObject.name.pos].input.hitArea.height)
+        });
+    } 
+
+    random() {
+
+        this.objetos = [
+            {  
+                levelMax: 5,
+                title: 'Arma1',
+                description: 'Desc1',
+            }, 
+            {  
+                levelMax: 4,
+                title: 'Arma2',
+                description: 'Desc2',
+            },
+            {  
+                levelMax: 3,
+                title: 'Arma3',
+                description: 'Desc3',
+            }
+        ]
+
+        this.objetos.sort( () => Math.random() - 0.5)
+
+        for (let i = 0; i < this.objetos.length; i++) {
+            this.add.text(250,150 + i * 70, this.objetos[i].title, { fontFamily : 'neuepixelsans', fill: '#000000'}).setFontSize(25)
+            this.add.text(250,185 + i * 70, this.objetos[i].description, { fontFamily : 'neuepixelsans', fill: '#000000'}).setFontSize(15)
+            this.zones.push(this.add.zone(245, 150 + i * 70, 270, 60).setOrigin(0).setName({ objetos : this.objetos[i], pos: i}).setInteractive().setRectangleDropZone( 270, 60))
+            this.graphics.strokeRect(this.zones[i].x , this.zones[i].y , this.zones[i].input.hitArea.width, this.zones[i].input.hitArea.height)
+        }
+        
+
+    }
+
+    /*
+    toGame () {
+        console.log("prueba")
+        this.scene.stop('seleccion')
+        this.scene.launch('menu')
+        this.scene.resume('menu')
+    }
+    */
+
+
+}
+
 class Juego extends Phaser.Scene {
     
     constructor () {
@@ -8,12 +95,14 @@ class Juego extends Phaser.Scene {
         this.gameTimeMin = 0;
         this.worldSizeWidth = 2000;
         this.worldSizeHeigth = 2000;
-        
+        this.objetos = [];
     }
+
 
     preload () {
         this.load.image('piso', 'assets/img/scene/floor.png');
         this.load.spritesheet('user','assets/img/player/Capuchirri.png',{frameWidth: 128,frameHeight:131,endFrame:1})
+        this.load.image('playButton', 'assets/img/scene/playButton')
     }
 
     create () {
@@ -46,11 +135,20 @@ class Juego extends Phaser.Scene {
         this.cursors = this.input.keyboard.createCursorKeys();
         //Se asigna scrollFactor 0 para no mover el texto con la camara
         this.timeText = this.add.text(20,20, this.gameTime, { fontFamily : 'pixelicWar', fill: '#ffffff'}).setFontSize(45).setScrollFactor(0);
+
+        this.buttonH = this.add.image(400,400, 'playButton').setScrollFactor(0)
+        this.buttonH.setScale(0.2)
+        this.buttonH.setInteractive()
+        this.buttonH.on('pointerdown', () => this.lista())
     } 
 
     update () {
         this.movementKeys()
 
+    }
+
+    lista () {
+        console.log(this.objetos)
     }
 
     movementKeys () {
@@ -83,7 +181,13 @@ class Juego extends Phaser.Scene {
         if (this.gameTimeSec > 59) {
             this.gameTimeSec = 0
             this.gameTimeMin += 1
+            //this.scene.pause('juego')
+            //this.scene.launch('seleccion')
+        } else if (this.gameTimeSec === 3) {
+            this.scene.pause('juego')
+            this.scene.add('seleccion', SeleccionObjeto, true, { objetos : this.objetos });
         }
+
         this.timeText.setText(this.gameTimeMin +' : '+ this.gameTimeSec)
 
 
