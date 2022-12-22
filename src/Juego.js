@@ -10,7 +10,6 @@ class SeleccionObjeto extends Phaser.Scene {
 
     preload() {
         this.load.image('bg', 'assets/img/scene/selectionbg.png')
-        this.load.image('playButton', 'assets/img/scene/playButton')
     }
 
     create (data) {
@@ -69,21 +68,9 @@ class SeleccionObjeto extends Phaser.Scene {
             this.zones.push(this.add.zone(245, 150 + i * 70, 270, 60).setOrigin(0).setName({ objetos : this.objetos[i], pos: i}).setInteractive().setRectangleDropZone( 270, 60))
             this.graphics.strokeRect(this.zones[i].x , this.zones[i].y , this.zones[i].input.hitArea.width, this.zones[i].input.hitArea.height)
         }
-        
-
     }
-
-    /*
-    toGame () {
-        console.log("prueba")
-        this.scene.stop('seleccion')
-        this.scene.launch('menu')
-        this.scene.resume('menu')
-    }
-    */
-
-
 }
+
 
 class Juego extends Phaser.Scene {
     
@@ -100,9 +87,9 @@ class Juego extends Phaser.Scene {
 
 
     preload () {
-        this.load.image('piso', 'assets/img/scene/floor.png');
+        this.load.image('piso', 'assets/img/scene/floorTile2.png');
         this.load.spritesheet('user','assets/img/player/Capuchirri.png',{frameWidth: 128,frameHeight:131,endFrame:1})
-        this.load.image('playButton', 'assets/img/scene/playButton')
+        this.load.image('bag', 'assets/img/scene/bag.png')
     }
 
     create () {
@@ -115,7 +102,7 @@ class Juego extends Phaser.Scene {
         this.bg = this.add.tileSprite(this.worldSizeWidth/2, this.worldSizeHeigth/2, this.worldSizeWidth, this.worldSizeHeigth, 'piso');
         //Se agrega el jugador a las fisicas del juego
         this.player = this.physics.add.sprite(this.worldSizeWidth/2, this.worldSizeHeigth/2, 'user')
-        this.player.setScale(0.5)
+        this.player.setScale(0.4)
 
         this.anims.create({
             key: 'mover',
@@ -136,8 +123,9 @@ class Juego extends Phaser.Scene {
         //Se asigna scrollFactor 0 para no mover el texto con la camara
         this.timeText = this.add.text(20,20, this.gameTime, { fontFamily : 'pixelicWar', fill: '#ffffff'}).setFontSize(45).setScrollFactor(0);
 
-        this.buttonH = this.add.image(400,400, 'playButton').setScrollFactor(0)
-        this.buttonH.setScale(0.2)
+
+        this.buttonH = this.add.image(770,570, 'bag').setScrollFactor(0)
+        this.buttonH.setScale(0.1)
         this.buttonH.setInteractive()
         this.buttonH.on('pointerdown', () => this.lista())
     } 
@@ -149,6 +137,7 @@ class Juego extends Phaser.Scene {
 
     lista () {
         console.log(this.objetos)
+
     }
 
     movementKeys () {
@@ -186,7 +175,7 @@ class Juego extends Phaser.Scene {
         } else if (this.gameTimeSec === 3) {
             this.scene.pause('juego')
             this.scene.add('seleccion', SeleccionObjeto, true, { objetos : this.objetos });
-        }
+        } 
 
         this.timeText.setText(this.gameTimeMin +' : '+ this.gameTimeSec)
 

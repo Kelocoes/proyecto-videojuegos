@@ -36,9 +36,5 @@ class Menu extends Phaser.Scene {
         // console.log("Si funciona")
         this.scene.start('juego')
     }
-
-
-    exit(){
-
-    }
+    
 }
