@@ -42,11 +42,14 @@ class Juego extends Phaser.Scene {
         this.player.setScale(0.5)
         
         //this.player.setScrollFactor(0)
-        this.enemy = this.add.sprite(this.worldSizeWidth/2+100, this.worldSizeWidth/2, 'user')
+        this.enemy = this.physics.add.sprite(this.worldSizeWidth/2+100, this.worldSizeWidth/2, 'user')
         this.enemy.setScale(0.5)
 
         //Se agrega la barra de vida del jugador 
         this.healthBar = new Phaser.GameObjects.Graphics(this);
+        this.healthBarX = this.player.x - 38
+        this.healthBarY = this.player.y + 35
+
         this.drawHB();
         
         this.add.existing(this.healthBar);
@@ -97,7 +100,7 @@ class Juego extends Phaser.Scene {
         this.timeText = this.add.text(20,20, this.gameTime, { fontFamily : 'pixelicWar', fill: '#ffffff'}).setFontSize(45).setScrollFactor(0);
         console.log("monda5")
         //Permite revisar si el jugador y el enemigo se superponen
-        this.physics.add.overlap(this.userContainer, this.enemy,()=>{console.log("auch")}, null, this  )
+        this.physics.add.overlap(this.userContainer, this.enemy,()=>{ console.log("auch"); this.decreaseHB(0.1)}, null, this  )
     } 
 
     update () {
@@ -166,14 +169,14 @@ class Juego extends Phaser.Scene {
             this.healthValue = 0;
         }
 
-        this.draw();
+        this.drawHB();
 
         return (this.healthValue === 0);
     }
 
     drawHB ()
     { 
-        //this.healthBar.clear();
+        this.healthBar.clear();
 
         //  BG
         this.healthBar.fillStyle(0x000000);
