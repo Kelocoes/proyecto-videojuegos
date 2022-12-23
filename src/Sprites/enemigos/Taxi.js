@@ -3,10 +3,10 @@ class Taxi extends Enemigo {
         super ({
             ...config,
             maxHP: 50,
-            velocidad: 50,
+            velocidad: 100,
         })
 
-        this.body.setSize(80, 42.2);
+        this.body.setSize(200, 200);
         this.setScale(0.1);
     }
 
