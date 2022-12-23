@@ -71,7 +71,7 @@ class Juego extends Phaser.Scene {
     
         //Se crea el contenedor y se adicionan el usuario y la barra de vida dentro de él
         this.userContainer = this.add.container(this.worldSizeWidth/2,this.worldSizeWidth/2);
-        this.userContainer.setSize(69, 60);
+        this.userContainer.setSize(30, 30);
 
 
         this.userContainer.add(this.player)
@@ -143,6 +143,7 @@ class Juego extends Phaser.Scene {
         }
 
         this.physics.add.collider(this.enemigos, this.enemigos);
+        this.physics.add.collider(this.userContainer, this.enemigos);
         
 
     } 
@@ -155,7 +156,7 @@ class Juego extends Phaser.Scene {
 
     enemigosSigue () {
         for (let i = 0; i < this.enemigos.getChildren().length; i++) {
-            this.physics.moveToObject(this.enemigos.getChildren()[i], this.player, this.enemigos.getChildren()[i].getVelocidad());
+            this.physics.moveToObject(this.enemigos.getChildren()[i], this.userContainer, this.enemigos.getChildren()[i].getVelocidad());
 
             // console.log(this.enemigos.getChildren()[i], this.enemigos.getChildren()[i].getVelocidad(), 'POR QUE NO FUNCIONAAA');
         }
@@ -212,7 +213,7 @@ class Juego extends Phaser.Scene {
     addGems(x,y){
 
         var gem = this.physics.add.sprite(x,y,'gem')
-        this.physics.add.overlap(this.player,gem,()=>{this.catchGem(gem)}, null,this )
+        this.physics.add.overlap(this.userContainer,gem,()=>{this.catchGem(gem)}, null,this )
         gem.setScale(0.15)
 
     }
