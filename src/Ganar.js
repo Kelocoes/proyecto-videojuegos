@@ -1,7 +1,7 @@
 class Ganar extends Phaser.Scene {
     constructor () {
         super({key: 'ganar'});
-        this.bd = undefined;
+        this.bg = undefined;
     }
 
     preload() {

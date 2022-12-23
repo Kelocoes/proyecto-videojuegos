@@ -8,15 +8,16 @@ class Juego extends Phaser.Scene {
         this.gameTimeMin = 0;
         this.worldSizeWidth = 2000;
         this.worldSizeHeigth = 2000;
-        this.enemigos;
-
+        this.objetos = [];
+        this.enemigos = undefined;
     }
 
-    preload () {
-        this.load.image('piso', 'assets/img/scene/floor.png');
-        this.load.spritesheet('user','assets/img/player/Capuchirri.png',{frameWidth: 128,frameHeight:131,endFrame:1});
-        this.load.image('taxi', 'assets/img/player/taxi.png');
 
+    preload () {
+        this.load.image('piso', 'assets/img/scene/floorTile2.png');
+        this.load.spritesheet('user','assets/img/player/Capuchirri.png',{frameWidth: 128,frameHeight:130,endFrame:1})
+        this.load.image('bag', 'assets/img/scene/bag.png')
+        this.load.image('taxi', 'assets/img/player/taxi.png');
     }
 
     create () {
@@ -29,7 +30,7 @@ class Juego extends Phaser.Scene {
         this.bg = this.add.tileSprite(this.worldSizeWidth/2, this.worldSizeHeigth/2, this.worldSizeWidth, this.worldSizeHeigth, 'piso');
         //Se agrega el jugador a las fisicas del juego
         this.player = this.physics.add.sprite(this.worldSizeWidth/2, this.worldSizeHeigth/2, 'user')
-        this.player.setScale(0.5)
+        this.player.setScale(0.4)
 
         this.anims.create({
             key: 'mover',
@@ -61,6 +62,11 @@ class Juego extends Phaser.Scene {
         this.cursors = this.input.keyboard.createCursorKeys();
         //Se asigna scrollFactor 0 para no mover el texto con la camara
         this.timeText = this.add.text(20,20, this.gameTime, { fontFamily : 'pixelicWar', fill: '#ffffff'}).setFontSize(45).setScrollFactor(0);
+
+        this.buttonH = this.add.image(770,570, 'bag').setScrollFactor(0)
+        this.buttonH.setScale(0.1)
+        this.buttonH.setInteractive()
+        this.buttonH.on('pointerdown', () => this.lista())
     }
 
     update () {
@@ -74,6 +80,11 @@ class Juego extends Phaser.Scene {
 
             console.log(this.enemigos.getChildren()[i], this.enemigos.getChildren()[i].getVelocidad(), 'POR QUE NO FUNCIONAAA');
         }
+    }
+
+    lista () {
+        console.log(this.objetos)
+
     }
 
     movementKeys () {
@@ -106,7 +117,13 @@ class Juego extends Phaser.Scene {
         if (this.gameTimeSec > 59) {
             this.gameTimeSec = 0
             this.gameTimeMin += 1
-        }
+            //this.scene.pause('juego')
+            //this.scene.launch('seleccion')
+        } else if (this.gameTimeSec === 3) {
+            this.scene.pause('juego')
+            this.scene.add('seleccion', SeleccionObjeto, true, { objetos : this.objetos });
+        } 
+
         this.timeText.setText(this.gameTimeMin +' : '+ this.gameTimeSec)
     }
 
