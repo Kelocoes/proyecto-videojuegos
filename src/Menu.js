@@ -1,5 +1,5 @@
 class Menu extends Phaser.Scene {
-    
+
     constructor () {
         super({key: 'menu'});
         this.bg = undefined;
@@ -9,7 +9,7 @@ class Menu extends Phaser.Scene {
 
     preload () {
         this.load.image('fondoMenu','assets/img/scene/fondoMenu.jpg')
-        this.load.image('playButton', 'assets/img/scene/playButton')
+        this.load.image('playButton', 'assets/img/scene/playButton.png')
     }
 
     create () {
@@ -25,7 +25,7 @@ class Menu extends Phaser.Scene {
         this.button.on('pointerdown', () => this.start())
 
         // this.button.on('pointerover',this.over);
-        
+
     }
 
     over () {
