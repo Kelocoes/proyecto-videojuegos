@@ -14,14 +14,14 @@ class Juego extends Phaser.Scene {
         //Se inicializa la barra de vida 
         
         this.healthBar =undefined;
-        this.healthBarX =  this.worldSizeWidth/2;
-        this.healthBarY =  this.worldSizeWidth/2;
+        this.healthBarX =  -40;
+        this.healthBarY =  36;
         this.healthValue = 100;
         this.p = 76 / 100;
 
         //Enemigo de prueba 
         this.enemy = undefined 
-        this.rectangle  = undefined
+
     }
 
     preload () {
@@ -38,29 +38,42 @@ class Juego extends Phaser.Scene {
         //Se pone en el centro del mundo el personaje
         this.bg = this.add.tileSprite(this.worldSizeWidth/2, this.worldSizeHeigth/2, this.worldSizeWidth, this.worldSizeHeigth, 'piso');
         //Se agrega el jugador a las fisicas del juego
-        this.player = this.physics.add.sprite(this.worldSizeWidth/2, this.worldSizeHeigth/2, 'user')
+        this.player = this.add.sprite(0, 0, 'user')
         this.player.setScale(0.5)
+        
+        //this.player.setScrollFactor(0)
+        this.enemy = this.add.sprite(this.worldSizeWidth/2+100, this.worldSizeWidth/2, 'user')
+        this.enemy.setScale(0.5)
+
         //Se agrega la barra de vida del jugador 
         this.healthBar = new Phaser.GameObjects.Graphics(this);
         this.drawHB();
+        
         this.add.existing(this.healthBar);
-        this.physics.add.existing(this.healthBar);
-        this.healthBar.body.setCollideWorldBounds(true);
+        
+        //this.healthBar.setScrollFactor(0)
+        
+        //this.physics.add.existing(this.healthBar);
+        //this.healthBar.body.setCollideWorldBounds(true);
         //this.healthBar.body.onWorldBounds = true;
         //this.healthBar.body.allowGravity = false;
 
         //Se crea el contenedor y se adicionan el usuario y la barra de vida dentro de él
-        // this.userContainer = this.add.container(0, 0);
-        // this.userContainer.add(this.player, 0, 0)
-        // this.userContainer.add(this.healthBar , 0, 0)
+        this.userContainer = this.add.container(this.worldSizeWidth/2,this.worldSizeWidth/2);
+        this.userContainer.setSize(80, 70);
+
+        this.userContainer.add(this.player)
+        this.userContainer.add(this.healthBar)
         
-        // this.userContainer.setSize(65, 65);
+        
 
-        // this.physics.world.enable(this.userContainer);
-        //this.physics.add.existing(this.userContainer);
-        //this.userContainer.body.setCollideWorldBounds(true);
+        //this.physics.world.enable(this.userContainer);
+        this.physics.add.existing(this.userContainer);
+        this.userContainer.body.setCollideWorldBounds(true);
+      
+   
 
-        //this.userContainer.body.setVelocity(100, 200).setBounce(1, 1).setCollideWorldBounds(true);
+        //this.userContainer.body.setVelocity(10, 200).setBounce(1, 1).setCollideWorldBounds(true);
 
         this.anims.create({
             key: 'mover',
@@ -71,9 +84,9 @@ class Juego extends Phaser.Scene {
 
         this.player.play('mover');
         //Se agregan colisiones con el borde del mundo
-        this.player.setCollideWorldBounds(true);
+        //this.player.setCollideWorldBounds(true);
         //Se sigue al personaje con la camara
-        this.cameras.main.startFollow(this.player);
+        this.cameras.main.startFollow(this.userContainer);
 
         
 
@@ -82,46 +95,51 @@ class Juego extends Phaser.Scene {
         this.cursors = this.input.keyboard.createCursorKeys();
         //Se asigna scrollFactor 0 para no mover el texto con la camara
         this.timeText = this.add.text(20,20, this.gameTime, { fontFamily : 'pixelicWar', fill: '#ffffff'}).setFontSize(45).setScrollFactor(0);
-        
+        console.log("monda5")
+        //Permite revisar si el jugador y el enemigo se superponen
+        this.physics.add.overlap(this.userContainer, this.enemy,()=>{console.log("auch")}, null, this  )
     } 
 
     update () {
         this.movementKeys()
-
+        //Retorna si el jugador superpone al enemigo 
+        //this.player.body.debugBodyColor = this.player.body.touching.none ? 0x0099ff : 0xff9900;
     }
 
     movementKeys () {
         //Se realizan movimientos del personaje por medio de velocidades ya que hace parte de las fisicas
         //Se mueve como un vector
-        this.player.setVelocity(0);
-        this.healthBar.body.setVelocity(0);
-        //this.userContainer.body.setVelocity(0)
+        // this.player.setVelocity(0);
+        // this.healthBar.body.setVelocity(0);
+       
+        this.userContainer.body.setVelocity(0)
+        
        
         if (this.cursors.left.isDown) {
-            this.player.setVelocityX(-300);
+            // this.player.setVelocityX(-300);
             this.player.setFlipX(true);
-            this.healthBar.moveTo(this.player.x, this.player.y);
+            // this.healthBar.moveTo(this.player.x, this.player.y);
             //this.rectangle.setVelocityX(-300);
-            //this.userContainer.body.velocity.x =-300;
+            this.userContainer.body.velocity.x =-300;
             
        
         } else if (this.cursors.right.isDown) {
-            this.player.setVelocityX(300);
+            // this.player.setVelocityX(300);
             this.player.setFlipX(false);
-            this.healthBar.body.setVelocityX(300);
-            //this.userContainer.body.velocity.x =300;
+            // this.healthBar.body.setVelocityX(300);
+            this.userContainer.body.velocity.x =300;
         }
 
         if (this.cursors.up.isDown){
-            this.healthBar.body.setVelocityY(-300);
-            this.player.setVelocityY(-300);
-            //this.userContainer.body.velocity.y =-300;
+            // this.healthBar.body.setVelocityY(-300);
+            // this.player.setVelocityY(-300);
+            this.userContainer.body.velocity.y =-300;
             
 
         } else if (this.cursors.down.isDown) {
-            this.player.setVelocityY(300);
-            this.healthBar.body.setVelocityY(300);
-            //this.userContainer.body.velocity.y =300;
+            // this.player.setVelocityY(300);
+            // this.healthBar.body.setVelocityY(300);
+            this.userContainer.body.velocity.y =300;
 
         }
     }
@@ -159,12 +177,12 @@ class Juego extends Phaser.Scene {
 
         //  BG
         this.healthBar.fillStyle(0x000000);
-        this.healthBar.fillRect(this.healthBarX, this.healthBarY, 80, 16);
+        this.healthBar.fillRect(this.healthBarX, this.healthBarY, 80, 12);
 
         //  Health
 
         this.healthBar.fillStyle(0xffffff);
-        this.healthBar.fillRect(this.healthBarX + 2, this.healthBarY + 2, 76, 12);
+        this.healthBar.fillRect(this.healthBarX + 2, this.healthBarY + 2, 76, 8);
 
         if (this.healthValue < 30)
         {
@@ -177,7 +195,7 @@ class Juego extends Phaser.Scene {
 
         var d = Math.floor(this.p * this.healthValue);
 
-        this.healthBar.fillRect(this.healthBarX + 2, this.healthBarY + 2, d, 12);
+        this.healthBar.fillRect(this.healthBarX + 2, this.healthBarY + 2, d, 8);
     }
 
     // damage (amount)
