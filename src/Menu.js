@@ -1,6 +1,7 @@
 class Menu extends Phaser.Scene {
-    
-    contructor () {
+
+    constructor () {
+        super({key: 'menu'});
         this.bg = undefined;
         this.button = undefined;
         this.title = undefined;
@@ -12,6 +13,7 @@ class Menu extends Phaser.Scene {
     }
 
     create () {
+
         this.bg = this.add.image(400,300,'fondoMenu')
 
         this.title = this.add.text(200,100, "Cali Survivors", { fontFamily : 'pixelicWar', fill: '#00000'}).setFontSize(70)
@@ -20,9 +22,10 @@ class Menu extends Phaser.Scene {
         this.button = this.add.image(400,300, 'playButton')
         this.button.setScale(0.3)
         this.button.setInteractive()
-        this.button.on('pointerdown', this.start)
+        this.button.on('pointerdown', () => this.start())
+
         // this.button.on('pointerover',this.over);
-        
+
     }
 
     over () {
@@ -33,8 +36,5 @@ class Menu extends Phaser.Scene {
         // console.log("Si funciona")
         this.scene.start('juego')
     }
-
-    exit(){
-
-    }
+    
 }
