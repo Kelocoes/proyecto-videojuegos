@@ -154,10 +154,7 @@ class Juego extends Phaser.Scene {
             this.gameTimeMin += 1
             //this.scene.pause('juego')
             //this.scene.launch('seleccion')
-        } else if (this.gameTimeSec === 3) {
-            this.scene.pause('juego')
-            this.scene.add('seleccion', SeleccionObjeto, true, { objetos : this.objetos });
-        } 
+        }
 
         this.timeText.setText(this.gameTimeMin +' : '+ this.gameTimeSec)
     }
@@ -175,7 +172,6 @@ class Juego extends Phaser.Scene {
         this.gems = this.gems + 1
 
         this.exp.updateBar(this.gems, this.levelResistance)
-        console.log(this.gems)
     }
 
     levelUp(){
@@ -189,6 +185,9 @@ class Juego extends Phaser.Scene {
             this.exp.updateBar(this.gems, this.levelResistance)
 
             console.log(this.gems,this.levelResistance,this.level)
+
+            this.scene.pause('juego')
+            this.scene.add('seleccion', SeleccionObjeto, true, { objetos : this.objetos });
 
         }
     }
