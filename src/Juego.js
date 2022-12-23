@@ -1,13 +1,16 @@
+
 class Juego extends Phaser.Scene {
-    
+
     constructor () {
         super({key: 'juego'});
         this.bd = undefined;
         this.timeText = undefined;
+        this.levelNumber = undefined
         this.gameTimeSec = 0;
         this.gameTimeMin = 0;
         this.worldSizeWidth = 2000;
         this.worldSizeHeigth = 2000;
+
         //Contenedor del jugador y su barra de vida
         this.userContainer = undefined;
         //Se inicializa la barra de vida 
@@ -19,11 +22,24 @@ class Juego extends Phaser.Scene {
         //Enemigo de prueba 
         this.enemy = undefined 
 
+        //Exp variables
+        this.gems = 0
+        this.level = 1
+        this.levelResistance = 10
+        this.exp = undefined
+        this.objetos = [];
+        this.enemigos = undefined;
+
+
     }
 
+
     preload () {
-        this.load.image('piso', 'assets/img/scene/floor.png');
-        this.load.spritesheet('user','assets/img/player/Capuchirri.png',{frameWidth: 128,frameHeight:131,endFrame:1})
+        this.load.image('gem','assets/img/scene/diamond.png')
+        this.load.image('piso', 'assets/img/scene/floorTile2.png');
+        this.load.spritesheet('user','assets/img/player/Capuchirri.png',{frameWidth: 128,frameHeight:130,endFrame:1})
+        this.load.image('bag', 'assets/img/scene/bag.png')
+        this.load.image('taxi', 'assets/img/player/taxi.png');
     }
 
     create () {
@@ -34,9 +50,10 @@ class Juego extends Phaser.Scene {
 
         //Se pone en el centro del mundo el personaje
         this.bg = this.add.tileSprite(this.worldSizeWidth/2, this.worldSizeHeigth/2, this.worldSizeWidth, this.worldSizeHeigth, 'piso');
+
         //Se agrega el jugador - La posición 0,0 corresponde con la posición del jugador dentro del contenedor
         this.player = this.add.sprite(0, 0, 'user')
-        this.player.setScale(0.5)
+        this.player.setScale(0.4)
         
         //Se agrega enemigo de prueba 
         this.enemy = this.physics.add.sprite(this.worldSizeWidth/2+100, this.worldSizeWidth/2, 'user')
@@ -55,6 +72,7 @@ class Juego extends Phaser.Scene {
         //Se crea el contenedor y se adicionan el usuario y la barra de vida dentro de él
         this.userContainer = this.add.container(this.worldSizeWidth/2,this.worldSizeWidth/2);
         this.userContainer.setSize(69, 60);
+
 
         this.userContainer.add(this.player)
         this.userContainer.add(this.healthBar)
@@ -81,21 +99,80 @@ class Juego extends Phaser.Scene {
         this.cursors = this.input.keyboard.createCursorKeys();
         //Se asigna scrollFactor 0 para no mover el texto con la camara
         this.timeText = this.add.text(20,20, this.gameTime, { fontFamily : 'pixelicWar', fill: '#ffffff'}).setFontSize(45).setScrollFactor(0);
+
         //Revisa si el jugador y el enemigo se superponen. Dado el caso, resta puntos de vida.
         this.physics.add.overlap(this.userContainer, this.enemy,()=>{ console.log("auch"); this.decreaseHB(0.1)}, null, this  )
+
+
+        this.levelNumber = this.add.text(720,20, this.level, { fontFamily : 'pixelicWar', fill: '#1944c9'}).setFontSize(45).setScrollFactor(0);
+        this.exp = new expBar(this,450,33,this.levelResistance, this.gems)
+        
+        this.addGems(950,950)
+        this.addGems(900,900)
+        this.addGems(850,850)
+        this.addGems(800,800)
+        this.addGems(750,750)
+        this.addGems(700,700)
+        this.addGems(600,600)
+        this.addGems(650,650)
+        this.addGems(500,500)
+        this.addGems(550,550)
+
+        this.addGems(1950,1950)
+        this.addGems(1900,1900)
+        this.addGems(1850,1850)
+        this.addGems(1800,1800)
+        this.addGems(1750,1750)
+        this.addGems(1700,1700)
+        this.addGems(1600,1600)
+        this.addGems(1650,1650)
+        this.addGems(1500,1500)
+        this.addGems(1550,1550)
+        this.addGems(1450,1450)
+        
+        this.buttonH = this.add.image(770,570, 'bag').setScrollFactor(0)
+        this.buttonH.setScale(0.1)
+        this.buttonH.setInteractive()
+        this.buttonH.on('pointerdown', () => this.lista())
+
+        this.enemigos = this.physics.add.group()
+        // Spawn de enemigo: Taxi:
+        for (let i = 0; i < 5; i++) {
+            let taxi = new Taxi({scene: this, posx: 1000+ (i*100), posy: 1000+ (i*100), key: 'taxi'})
+            this.enemigos.add(taxi);
+        }
+
+        this.physics.add.collider(this.enemigos, this.enemigos);
+        
+
     } 
 
     update () {
         this.movementKeys()
+        this.enemigosSigue()
+        this.levelUp()
+    }
+
+    enemigosSigue () {
+        for (let i = 0; i < this.enemigos.getChildren().length; i++) {
+            this.physics.moveToObject(this.enemigos.getChildren()[i], this.player, this.enemigos.getChildren()[i].getVelocidad());
+
+            // console.log(this.enemigos.getChildren()[i], this.enemigos.getChildren()[i].getVelocidad(), 'POR QUE NO FUNCIONAAA');
+        }
+    }
+
+    lista () {
+        console.log(this.objetos)
 
     }
 
     movementKeys () {
         //Se realizan movimientos del personaje por medio de velocidades ya que hace parte de las fisicas
         //Se mueve como un vector
+
         this.userContainer.body.setVelocity(0)
         
-       
+
         if (this.cursors.left.isDown) {
             this.player.setFlipX(true);
             this.userContainer.body.velocity.x =-300;
@@ -117,16 +194,50 @@ class Juego extends Phaser.Scene {
     }
 
     addTime(){
-
         this.gameTimeSec += 1;
         // console.log(this.gameTimeSec)
         if (this.gameTimeSec > 59) {
             this.gameTimeSec = 0
             this.gameTimeMin += 1
-        }
+            //this.scene.pause('juego')
+            //this.scene.launch('seleccion')
+        } else if (this.gameTimeSec === 3) {
+            this.scene.pause('juego')
+            this.scene.add('seleccion', SeleccionObjeto, true, { objetos : this.objetos });
+        } 
+
         this.timeText.setText(this.gameTimeMin +' : '+ this.gameTimeSec)
+    }
 
+    addGems(x,y){
 
+        var gem = this.physics.add.sprite(x,y,'gem')
+        this.physics.add.overlap(this.player,gem,()=>{this.catchGem(gem)}, null,this )
+        gem.setScale(0.15)
+
+    }
+
+    catchGem(gem){
+        gem.destroy()
+        this.gems = this.gems + 1
+
+        this.exp.updateBar(this.gems, this.levelResistance)
+        console.log(this.gems)
+    }
+
+    levelUp(){
+        if(this.gems === this.levelResistance){
+
+            this.gems = 0
+            this.levelResistance = Math.ceil(this.levelResistance + this.levelResistance*0.05)
+            this.level = this.level + 1
+            this.levelNumber.setText(this.level)
+
+            this.exp.updateBar(this.gems, this.levelResistance)
+
+            console.log(this.gems,this.levelResistance,this.level)
+
+        }
     }
 
     decreaseHB (amount)
