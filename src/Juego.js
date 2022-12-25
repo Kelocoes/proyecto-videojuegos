@@ -29,8 +29,6 @@ class Juego extends Phaser.Scene {
         this.exp = undefined
         this.objetos = [];
         this.enemigos = undefined;
-
-
     }
 
 
@@ -80,8 +78,8 @@ class Juego extends Phaser.Scene {
         //Se le agrega la fisica 
         this.physics.add.existing(this.userContainer);
         this.userContainer.body.setCollideWorldBounds(true);
-      
-   
+
+
         this.anims.create({
             key: 'mover',
             frames: this.anims.generateFrameNumbers('user'),
@@ -145,7 +143,7 @@ class Juego extends Phaser.Scene {
         this.physics.add.collider(this.enemigos, this.enemigos);
         this.physics.add.collider(this.userContainer, this.enemigos);
         
-
+        this.objetosInstancia = new Objetos() 
     } 
 
     update () {
@@ -235,7 +233,7 @@ class Juego extends Phaser.Scene {
             console.log(this.gems,this.levelResistance,this.level)
 
             this.scene.pause('juego')
-            this.scene.add('seleccion', SeleccionObjeto, true, { objetos : this.objetos });
+            this.scene.add('seleccion', SeleccionObjeto, true, { instancia : this.objetosInstancia,  });
 
         }
     }
