@@ -2,7 +2,7 @@ class Objetos {
     
     constructor () {
         this.flag = true
-        this.objetosJugador = [[]]
+        this.objetosJugador = [[],[]]
         this.objetos = [
             [
                 {   id: 1,  
@@ -44,7 +44,7 @@ class Objetos {
                     description: 'Reduce el tiempo del acuchillado',
                 },
                 {  
-                    id: 1,
+                    id: 3,
                     title: 'Molotov III',
                     description: 'Aumenta 1 proyectil',
                 },
@@ -53,7 +53,6 @@ class Objetos {
     }
 
     updateObjetosJugador (objeto) {
-        
         // Mover objetos a la bolsa del jugador
         for(let i = 0; i < this.objetos.length;i ++) {
             if (this.objetos[i].length !== 0) {
@@ -63,11 +62,12 @@ class Objetos {
                     if (this.objetos[i].length === 0) {
                         this.objetos.splice(i, 1); // 2nd parameter means remove one item only
                     }
-                    break
+                    break;
                 }
             }
         }
 
+        
         if (this.objetosJugador[this.objetosJugador.length - 1].length !== 0 && this.flag) {
             var aux = []
             for(let i = 0; i < this.objetos.length; i++) {
@@ -83,13 +83,15 @@ class Objetos {
             this.flag = false
             this.objetos = aux
         } 
-
+        // console.log('Objetos jugador',this.objetosJugador)
+        // console.log('Objetos restantes',this.objetos)
     }
 
     guardarObjetosJugador(objetoAIngresar){
         for (let j = 0; j < this.objetosJugador.length; j ++) {
             if (this.objetosJugador[j].length === 0 || this.objetosJugador[j][0].id === objetoAIngresar.id) {
                 this.objetosJugador[j].push(objetoAIngresar)
+                break
             }
         }
     }

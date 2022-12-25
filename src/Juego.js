@@ -27,7 +27,6 @@ class Juego extends Phaser.Scene {
         this.level = 1
         this.levelResistance = 10
         this.exp = undefined
-        this.objetos = [];
         this.enemigos = undefined;
     }
 
@@ -161,8 +160,9 @@ class Juego extends Phaser.Scene {
     }
 
     lista () {
-        console.log(this.objetos)
-
+        console.log(this.objetosInstancia.objetosJugador)
+        this.scene.pause('juego')
+        this.scene.add('inventario', Inventario, true, { objetos : this.objetosInstancia.objetosJugador });
     }
 
     movementKeys () {
@@ -176,7 +176,7 @@ class Juego extends Phaser.Scene {
             this.player.setFlipX(true);
             this.userContainer.body.velocity.x =-300;
             
-       
+
         } else if (this.cursors.right.isDown) {
             this.player.setFlipX(false);
             this.userContainer.body.velocity.x =300;
@@ -233,7 +233,7 @@ class Juego extends Phaser.Scene {
             console.log(this.gems,this.levelResistance,this.level)
 
             this.scene.pause('juego')
-            this.scene.add('seleccion', SeleccionObjeto, true, { instancia : this.objetosInstancia,  });
+            this.scene.add('seleccion', SeleccionObjeto, true, { instancia : this.objetosInstancia });
 
         }
     }
