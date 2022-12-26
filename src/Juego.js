@@ -101,7 +101,7 @@ class Juego extends Phaser.Scene {
         this.physics.add.overlap(this.userContainer, this.enemy,()=>{ console.log("auch"); this.decreaseHB(0.1)}, null, this  )
 
 
-        this.levelNumber = this.add.text(720,20, this.level, { fontFamily : 'pixelicWar', fill: '#1944c9'}).setFontSize(45).setScrollFactor(0);
+        this.levelNumber = this.add.text(720,20, this.level, { fontFamily : 'pixelicWar', fill: '#ffffff'}).setFontSize(45).setScrollFactor(0);
         this.exp = new expBar(this,450,33,this.levelResistance, this.gems)
         
         this.addGems(950,950)
@@ -160,7 +160,6 @@ class Juego extends Phaser.Scene {
     }
 
     lista () {
-        console.log(this.objetosInstancia.objetosJugador)
         this.scene.pause('juego')
         this.scene.add('inventario', Inventario, true, { objetos : this.objetosInstancia.objetosJugador });
     }

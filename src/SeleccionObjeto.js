@@ -24,7 +24,7 @@ class SeleccionObjeto extends Phaser.Scene {
         this.random(data)
 
         this.input.on('gameobjectdown', function (pointer, gameObject) {
-            console.log(gameObject.name)
+            // console.log(gameObject.name)
             data.instancia.updateObjetosJugador(gameObject.name)
             self.scene.resume('juego')
             self.scene.remove('seleccion')
