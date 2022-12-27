@@ -26,4 +26,5 @@ class Enemigo extends Phaser.Physics.Arcade.Sprite {
     }
 
     // funciones de muerte o ataque ...
+
 }

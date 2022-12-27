@@ -30,7 +30,8 @@ class Juego extends Phaser.Scene {
         this.objetos = [];
         this.enemigos = undefined;
 
-
+        //Arma de prueba
+        this.weapon = undefined 
     }
 
 
@@ -40,6 +41,7 @@ class Juego extends Phaser.Scene {
         this.load.spritesheet('user','assets/img/player/Capuchirri.png',{frameWidth: 128,frameHeight:130,endFrame:1})
         this.load.image('bag', 'assets/img/scene/bag.png')
         this.load.image('taxi', 'assets/img/player/taxi.png');
+        this.load.image('cuchillo', 'assets/img/weapons/knife.png')
     }
 
     create () {
@@ -100,9 +102,6 @@ class Juego extends Phaser.Scene {
         //Se asigna scrollFactor 0 para no mover el texto con la camara
         this.timeText = this.add.text(20,20, this.gameTime, { fontFamily : 'pixelicWar', fill: '#ffffff'}).setFontSize(45).setScrollFactor(0);
 
-        //Revisa si el jugador y el enemigo se superponen. Dado el caso, resta puntos de vida.
-        this.physics.add.overlap(this.userContainer, this.enemy,()=>{ console.log("auch"); this.decreaseHB(0.1)}, null, this  )
-
 
         this.levelNumber = this.add.text(720,20, this.level, { fontFamily : 'pixelicWar', fill: '#1944c9'}).setFontSize(45).setScrollFactor(0);
         this.exp = new expBar(this,450,33,this.levelResistance, this.gems)
@@ -142,9 +141,19 @@ class Juego extends Phaser.Scene {
             this.enemigos.add(taxi);
         }
 
+        //Revisa si el jugador y el enemigo se superponen. Dado el caso, resta puntos de vida.
+        this.physics.add.overlap(this.userContainer, this.enemigos,()=>{ console.log("auch"); this.decreaseHB(0.1)}, null, this  )
+
         this.physics.add.collider(this.enemigos, this.enemigos);
         this.physics.add.collider(this.userContainer, this.enemigos);
-        
+
+        //Se adiciona el arma de prueba del jugador
+        // this.weapon = this.add.sprite(this.player.x + 30, this.player.y, 'cuchillo')
+        // this.weapon.setScale(0.1)
+        // this.userContainer.add(this.weapon)
+
+        this.aparecerArma()
+
 
     } 
 
@@ -152,6 +161,20 @@ class Juego extends Phaser.Scene {
         this.movementKeys()
         this.enemigosSigue()
         this.levelUp()
+    }
+
+    aparecerArma(){
+        var weapon = this.physics.add.sprite(this.userContainer.x + 30, this.userContainer.y, 'cuchillo');
+        weapon.setScale(0.1)   
+
+        weapon.setVelocityX(-200);
+
+        //this.time.delayedCall(1000, ()=> {weapon.destroy; this.aparecerArma}, [], this);
+        this.time.delayedCall(1000, this.aparecerArma, [], this);
+
+       //Revisa si el arma y el enemigo se superponen. Dado el caso, resta puntos de vida al enemigo
+       this.physics.add.overlap(weapon, this.enemigos,(weapon, enemy)=>{ weapon.destroy(); enemy.destroy()}, null, this  )
+    
     }
 
     enemigosSigue () {

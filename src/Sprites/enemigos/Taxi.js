@@ -11,4 +11,5 @@ class Taxi extends Enemigo {
     }
 
     // funciones de atacar y recibir daño...
+
 }
