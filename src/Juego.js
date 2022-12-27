@@ -142,7 +142,7 @@ class Juego extends Phaser.Scene {
         }
 
         //Revisa si el jugador y el enemigo se superponen. Dado el caso, resta puntos de vida.
-        this.physics.add.overlap(this.userContainer, this.enemigos,()=>{ console.log("auch"); this.decreaseHB(0.1)}, null, this  )
+        this.physics.add.overlap(this.userContainer, this.enemigos,(userContainer,enemy)=>{ console.log("auch"); this.decreaseHB(enemy.getDano())}, null, this  )
 
         this.physics.add.collider(this.enemigos, this.enemigos);
         this.physics.add.collider(this.userContainer, this.enemigos);
@@ -173,7 +173,7 @@ class Juego extends Phaser.Scene {
         this.time.delayedCall(1000, this.aparecerArma, [], this);
 
        //Revisa si el arma y el enemigo se superponen. Dado el caso, resta puntos de vida al enemigo
-       this.physics.add.overlap(weapon, this.enemigos,(weapon, enemy)=>{ weapon.destroy(); enemy.destroy()}, null, this  )
+       this.physics.add.overlap(weapon, this.enemigos,(weapon, enemy)=>{ weapon.destroy(); enemy.recibirDano(25)}, null, this  )
     
     }
 

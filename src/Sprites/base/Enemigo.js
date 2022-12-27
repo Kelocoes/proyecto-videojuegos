@@ -11,6 +11,9 @@ class Enemigo extends Phaser.Physics.Arcade.Sprite {
 
         // velocidad
         this.velocidad = config.velocidad
+
+        //Daño
+        this.dano =config.dano
     }
 
     // getters
@@ -26,5 +29,14 @@ class Enemigo extends Phaser.Physics.Arcade.Sprite {
     }
 
     // funciones de muerte o ataque ...
+    getDano(){
+        return this.dano;
+    }
 
+    recibirDano(dano){
+        this.hp -= dano
+        if(this.hp<=0){
+            this.destroy()
+        } 
+    }
 }
