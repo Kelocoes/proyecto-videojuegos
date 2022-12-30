@@ -10,4 +10,8 @@ class Cuchillo extends Weapon {
 
         this.setScale(0.1);
     }
+
+    animation () {
+        this.rotation += 0.1
+    }
 }

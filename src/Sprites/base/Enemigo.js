@@ -35,11 +35,12 @@ class Enemigo extends Phaser.Physics.Arcade.Sprite {
     }
 
     // recibe el dano
-    recibirDano(dano){
+    recibirDano(dano, funcionGema, self){
         this.dmg_animation() // realiza la animacion del daño
 
         this.hp -= dano
         if(this.hp<=0){
+            funcionGema(this.body.position.x, this.body.position.y, self)
             this.destroy()
         }
     }

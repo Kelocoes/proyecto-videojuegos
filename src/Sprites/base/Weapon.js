@@ -17,6 +17,7 @@ class Weapon extends Phaser.Physics.Arcade.Sprite{
         this.dano = config.dano;
     }
 
+
     // getters
     getDano () {
         return this.dano;

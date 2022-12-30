@@ -20,8 +20,6 @@ class Juego extends Phaser.Scene {
         this.healthValue = 100;
         this.p = 76 / 100;
 
-        //Enemigo de prueba
-        this.enemy = undefined
 
         //Exp variables
         this.gems = 0
@@ -66,8 +64,8 @@ class Juego extends Phaser.Scene {
         this.player.setScale(0.4)
 
         //Se agrega enemigo de prueba
-        this.enemy = this.physics.add.sprite(this.worldSizeWidth/2+100, this.worldSizeWidth/2, 'user')
-        this.enemy.setScale(0.5)
+        //this.enemy = this.physics.add.sprite(this.worldSizeWidth/2+100, this.worldSizeWidth/2, 'user')
+        // this.enemy.setScale(0.5)
 
         //Se crea la barra de vida del jugador
         //Crea un objeto graphics para dibujar la barra
@@ -107,34 +105,30 @@ class Juego extends Phaser.Scene {
 
         this.cursors = this.input.keyboard.createCursorKeys();
         //Se asigna scrollFactor 0 para no mover el texto con la camara
-        this.timeText = this.add.text(20,20, this.gameTime, { fontFamily : 'pixelicWar', fill: '#ffffff'}).setFontSize(45).setScrollFactor(0);
 
 
-        this.levelNumber = this.add.text(720,20, this.level, { fontFamily : 'pixelicWar', fill: '#ffffff'}).setFontSize(45).setScrollFactor(0);
-        this.exp = new expBar(this,450,33,this.levelResistance, this.gems)
+        // this.addGems(950,950,this)
+        // this.addGems(900,900, this)
+        // this.addGems(850,850, this)
+        // this.addGems(800,800, this)
+        // this.addGems(750,750, this)
+        // this.addGems(700,700, this)
+        // this.addGems(600,600, this)
+        // this.addGems(650,650, this)
+        // this.addGems(500,500, this)
+        // this.addGems(550,550, this)
 
-        this.addGems(950,950)
-        this.addGems(900,900)
-        this.addGems(850,850)
-        this.addGems(800,800)
-        this.addGems(750,750)
-        this.addGems(700,700)
-        this.addGems(600,600)
-        this.addGems(650,650)
-        this.addGems(500,500)
-        this.addGems(550,550)
-
-        this.addGems(1950,1950)
-        this.addGems(1900,1900)
-        this.addGems(1850,1850)
-        this.addGems(1800,1800)
-        this.addGems(1750,1750)
-        this.addGems(1700,1700)
-        this.addGems(1600,1600)
-        this.addGems(1650,1650)
-        this.addGems(1500,1500)
-        this.addGems(1550,1550)
-        this.addGems(1450,1450)
+        // this.addGems(1950,1950, this)
+        // this.addGems(1900,1900, this)
+        // this.addGems(1850,1850, this)
+        // this.addGems(1800,1800, this)
+        // this.addGems(1750,1750, this)
+        // this.addGems(1700,1700, this)
+        // this.addGems(1600,1600, this)
+        // this.addGems(1650,1650, this)
+        // this.addGems(1500,1500, this)
+        // this.addGems(1550,1550, this)
+        // this.addGems(1450,1450, this)
 
         this.buttonH = this.add.image(770,570, 'bag').setScrollFactor(0)
         this.buttonH.setScale(0.1)
@@ -159,28 +153,42 @@ class Juego extends Phaser.Scene {
         // this.weapon.setScale(0.1)
         // this.userContainer.add(this.weapon)
 
+        this.objetosInstancia = new Objetos() 
+
+
+        this.weapons = this.physics.add.group()
         // Creacion de arma (s)
         this.aparecerCuchillo()
-    }
-        
-        this.objetosInstancia = new Objetos() 
+
+        this.timeText = this.add.text(20,20, this.gameTime, { fontFamily : 'pixelicWar', fill: '#ffffff'}).setFontSize(45).setScrollFactor(0);
+
+        this.levelNumber = this.add.text(720,20, this.level, { fontFamily : 'pixelicWar', fill: '#ffffff'}).setFontSize(45).setScrollFactor(0);
+        this.exp = new expBar(this,450,33,this.levelResistance, this.gems)
     } 
 
     update () {
         this.movementKeys()
         this.enemigosSigue()
         this.levelUp()
+        this.animacionesArmas()
     }
 
     // Mecanica del cuchillo
     aparecerCuchillo(){
         let cuchillo = new Cuchillo({scene: this, posx: this.userContainer.x + 20, posy: this.userContainer.y, key: 'cuchillo' })
+        this.weapons.add(cuchillo)
         cuchillo.setVelocityX(this.direction['horizontal'] * cuchillo.getVelocidad());
         cuchillo.setVelocityY(this.direction['vertical'] * cuchillo.getVelocidad());
         //this.time.delayedCall(1000, ()=> {weapon.destroy; this.aparecerArma}, [], this);
         this.time.delayedCall(cuchillo.getSpawningVel(), this.aparecerCuchillo, [], this);
         //Revisa si el arma y el enemigo se superponen. Dado el caso, resta puntos de vida al enemigo
-        this.physics.add.overlap(cuchillo, this.enemigos,(weapon, enemy)=>{ cuchillo.destroy(); enemy.recibirDano(cuchillo.getDano())}, null, this)
+        this.physics.add.overlap(cuchillo, this.enemigos,(weapon, enemy)=>{ cuchillo.destroy(); enemy.recibirDano(cuchillo.getDano(), this.addGems, this)}, null, this)
+    }
+
+    animacionesArmas() {
+        for (let i = 0; i < this.weapons.getChildren().length; i++) {
+            this.weapons.getChildren()[i].animation()
+        }
     }
 
     enemigosSigue () {
@@ -245,16 +253,18 @@ class Juego extends Phaser.Scene {
             //this.scene.pause('juego')
             //this.scene.launch('seleccion')
 
+        } else if (this.gameTimeMin > 5) {
+            this.scene.start('ganar')
         }
 
         this.timeText.setText(this.gameTimeMin +' : '+ this.gameTimeSec)
     }
 
-    addGems(x,y){
+    addGems(x,y, self){
 
-        var gem = this.physics.add.sprite(x,y,'gem')
-        this.physics.add.overlap(this.userContainer,gem,()=>{this.catchGem(gem)}, null,this )
-        gem.setScale(0.15)
+        var gem = self.physics.add.sprite(x,y,'gem')
+        self.physics.add.overlap(self.userContainer,gem,()=>{self.catchGem(gem)}, null,self )
+        gem.setScale(0.10)
 
     }
 
