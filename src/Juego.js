@@ -13,14 +13,15 @@ class Juego extends Phaser.Scene {
 
         //Contenedor del jugador y su barra de vida
         this.userContainer = undefined;
-        //Se inicializa la barra de vida 
+        //Se inicializa la barra de vida
         this.healthBar =undefined;
         this.healthBarX =  undefined;
         this.healthBarY =  undefined;
         this.healthValue = 100;
         this.p = 76 / 100;
-        //Enemigo de prueba 
-        this.enemy = undefined 
+
+        //Enemigo de prueba
+        this.enemy = undefined
 
         //Exp variables
         this.gems = 0
@@ -28,10 +29,17 @@ class Juego extends Phaser.Scene {
         this.levelResistance = 10
         this.exp = undefined
         this.objetos = [];
+
+        // Variables de direccion: -1-> arriba, izquierda || 1 -> derecha, abajo || 0 -> No se ha tocado del boton
+        this.direction = {'vertical' : 0, 'horizontal': 0}
+        this.directionLog = undefined;
+
+        // grupo de enemigos
         this.enemigos = undefined;
 
-        //Arma de prueba
-        this.weapon = undefined 
+        // grupo de armas en el juego
+        this.weapons = undefined;
+
     }
 
 
@@ -56,21 +64,21 @@ class Juego extends Phaser.Scene {
         //Se agrega el jugador - La posición 0,0 corresponde con la posición del jugador dentro del contenedor
         this.player = this.add.sprite(0, 0, 'user')
         this.player.setScale(0.4)
-        
-        //Se agrega enemigo de prueba 
+
+        //Se agrega enemigo de prueba
         this.enemy = this.physics.add.sprite(this.worldSizeWidth/2+100, this.worldSizeWidth/2, 'user')
         this.enemy.setScale(0.5)
 
         //Se crea la barra de vida del jugador
-        //Crea un objeto graphics para dibujar la barra 
+        //Crea un objeto graphics para dibujar la barra
         this.healthBar = new Phaser.GameObjects.Graphics(this);
         //Posición de la barra respecto al jugador
         this.healthBarX = this.player.x - 38
         this.healthBarY = this.player.y + 35
-        this.drawHB(); 
+        this.drawHB();
         this.add.existing(this.healthBar);
-        
-    
+
+
         //Se crea el contenedor y se adicionan el usuario y la barra de vida dentro de él
         this.userContainer = this.add.container(this.worldSizeWidth/2,this.worldSizeWidth/2);
         this.userContainer.setSize(30, 30);
@@ -78,12 +86,11 @@ class Juego extends Phaser.Scene {
 
         this.userContainer.add(this.player)
         this.userContainer.add(this.healthBar)
-        
-        //Se le agrega la fisica 
+
+        //Se le agrega la fisica
         this.physics.add.existing(this.userContainer);
         this.userContainer.body.setCollideWorldBounds(true);
-      
-   
+
         this.anims.create({
             key: 'mover',
             frames: this.anims.generateFrameNumbers('user'),
@@ -105,7 +112,7 @@ class Juego extends Phaser.Scene {
 
         this.levelNumber = this.add.text(720,20, this.level, { fontFamily : 'pixelicWar', fill: '#1944c9'}).setFontSize(45).setScrollFactor(0);
         this.exp = new expBar(this,450,33,this.levelResistance, this.gems)
-        
+
         this.addGems(950,950)
         this.addGems(900,900)
         this.addGems(850,850)
@@ -128,14 +135,14 @@ class Juego extends Phaser.Scene {
         this.addGems(1500,1500)
         this.addGems(1550,1550)
         this.addGems(1450,1450)
-        
+
         this.buttonH = this.add.image(770,570, 'bag').setScrollFactor(0)
         this.buttonH.setScale(0.1)
         this.buttonH.setInteractive()
         this.buttonH.on('pointerdown', () => this.lista())
 
         this.enemigos = this.physics.add.group()
-        // Spawn de enemigo: Taxi:
+        // Spawn de enemigo: Taxi: Aqui deberian spawnearse todos los enemigos
         for (let i = 0; i < 5; i++) {
             let taxi = new Taxi({scene: this, posx: 1000+ (i*100), posy: 1000+ (i*100), key: 'taxi'})
             this.enemigos.add(taxi);
@@ -144,18 +151,17 @@ class Juego extends Phaser.Scene {
         //Revisa si el jugador y el enemigo se superponen. Dado el caso, resta puntos de vida.
         this.physics.add.overlap(this.userContainer, this.enemigos,(userContainer,enemy)=>{ console.log("auch"); this.decreaseHB(enemy.getDano())}, null, this  )
 
+        // Colliders:
         this.physics.add.collider(this.enemigos, this.enemigos);
         this.physics.add.collider(this.userContainer, this.enemigos);
-
         //Se adiciona el arma de prueba del jugador
         // this.weapon = this.add.sprite(this.player.x + 30, this.player.y, 'cuchillo')
         // this.weapon.setScale(0.1)
         // this.userContainer.add(this.weapon)
 
-        this.aparecerArma()
-
-
-    } 
+        // Creacion de arma (s)
+        this.aparecerCuchillo()
+    }
 
     update () {
         this.movementKeys()
@@ -163,24 +169,22 @@ class Juego extends Phaser.Scene {
         this.levelUp()
     }
 
-    aparecerArma(){
-        var weapon = this.physics.add.sprite(this.userContainer.x + 30, this.userContainer.y, 'cuchillo');
-        weapon.setScale(0.1)   
-
-        weapon.setVelocityX(-200);
-
+    // Mecanica del cuchillo
+    aparecerCuchillo(){
+        let cuchillo = new Cuchillo({scene: this, posx: this.userContainer.x + 20, posy: this.userContainer.y, key: 'cuchillo' })
+        cuchillo.setVelocityX(this.direction['horizontal'] * cuchillo.getVelocidad());
+        cuchillo.setVelocityY(this.direction['vertical'] * cuchillo.getVelocidad());
         //this.time.delayedCall(1000, ()=> {weapon.destroy; this.aparecerArma}, [], this);
-        this.time.delayedCall(1000, this.aparecerArma, [], this);
-
-       //Revisa si el arma y el enemigo se superponen. Dado el caso, resta puntos de vida al enemigo
-       this.physics.add.overlap(weapon, this.enemigos,(weapon, enemy)=>{ weapon.destroy(); enemy.recibirDano(25)}, null, this  )
-    
+        this.time.delayedCall(cuchillo.getSpawningVel(), this.aparecerCuchillo, [], this);
+        //Revisa si el arma y el enemigo se superponen. Dado el caso, resta puntos de vida al enemigo
+        this.physics.add.overlap(cuchillo, this.enemigos,(weapon, enemy)=>{ cuchillo.destroy(); enemy.recibirDano(cuchillo.getDano())}, null, this)
     }
 
     enemigosSigue () {
         for (let i = 0; i < this.enemigos.getChildren().length; i++) {
             this.physics.moveToObject(this.enemigos.getChildren()[i], this.userContainer, this.enemigos.getChildren()[i].getVelocidad());
 
+            this.enemigos.getChildren()[i].turn_around(this.userContainer.x)
             // console.log(this.enemigos.getChildren()[i], this.enemigos.getChildren()[i].getVelocidad(), 'POR QUE NO FUNCIONAAA');
         }
     }
@@ -195,25 +199,35 @@ class Juego extends Phaser.Scene {
         //Se mueve como un vector
 
         this.userContainer.body.setVelocity(0)
-        
+
+        if(this.directionLog === 'down' || this.directionLog === 'up') {
+            this.direction['horizontal'] = 0
+        } else {
+            this.direction['vertical'] = 0
+        }
 
         if (this.cursors.left.isDown) {
             this.player.setFlipX(true);
             this.userContainer.body.velocity.x =-300;
-            
-       
+            this.direction['horizontal'] = -1
+            this.directionLog = 'left'
         } else if (this.cursors.right.isDown) {
             this.player.setFlipX(false);
             this.userContainer.body.velocity.x =300;
+            this.direction['horizontal'] = 1
+            this.directionLog = 'right'
         }
 
         if (this.cursors.up.isDown){
             this.userContainer.body.velocity.y =-300;
-            
+            this.direction['vertical'] = -1
+            this.directionLog = 'up'
+
 
         } else if (this.cursors.down.isDown) {
             this.userContainer.body.velocity.y =300;
-
+            this.direction['vertical'] = 1
+            this.directionLog = 'down'
         }
     }
 
@@ -228,7 +242,7 @@ class Juego extends Phaser.Scene {
         } else if (this.gameTimeSec === 3) {
             this.scene.pause('juego')
             this.scene.add('seleccion', SeleccionObjeto, true, { objetos : this.objetos });
-        } 
+        }
 
         this.timeText.setText(this.gameTimeMin +' : '+ this.gameTimeSec)
     }
@@ -279,7 +293,7 @@ class Juego extends Phaser.Scene {
     }
 
     drawHB ()
-    { 
+    {
         this.healthBar.clear();
 
         //  BG
@@ -306,5 +320,3 @@ class Juego extends Phaser.Scene {
     }
 
 }
-
-

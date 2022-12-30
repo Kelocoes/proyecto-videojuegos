@@ -10,7 +10,4 @@ class Taxi extends Enemigo {
         this.body.setSize(200, 200);
         this.setScale(0.1);
     }
-
-    // funciones de atacar y recibir daño...
-
 }
