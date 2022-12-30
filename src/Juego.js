@@ -27,10 +27,7 @@ class Juego extends Phaser.Scene {
         this.level = 1
         this.levelResistance = 10
         this.exp = undefined
-        this.objetos = [];
         this.enemigos = undefined;
-
-
     }
 
 
@@ -80,8 +77,8 @@ class Juego extends Phaser.Scene {
         //Se le agrega la fisica 
         this.physics.add.existing(this.userContainer);
         this.userContainer.body.setCollideWorldBounds(true);
-      
-   
+
+
         this.anims.create({
             key: 'mover',
             frames: this.anims.generateFrameNumbers('user'),
@@ -104,7 +101,7 @@ class Juego extends Phaser.Scene {
         this.physics.add.overlap(this.userContainer, this.enemy,()=>{ console.log("auch"); this.decreaseHB(0.1)}, null, this  )
 
 
-        this.levelNumber = this.add.text(720,20, this.level, { fontFamily : 'pixelicWar', fill: '#1944c9'}).setFontSize(45).setScrollFactor(0);
+        this.levelNumber = this.add.text(720,20, this.level, { fontFamily : 'pixelicWar', fill: '#ffffff'}).setFontSize(45).setScrollFactor(0);
         this.exp = new expBar(this,450,33,this.levelResistance, this.gems)
         
         this.addGems(950,950)
@@ -145,7 +142,7 @@ class Juego extends Phaser.Scene {
         this.physics.add.collider(this.enemigos, this.enemigos);
         this.physics.add.collider(this.userContainer, this.enemigos);
         
-
+        this.objetosInstancia = new Objetos() 
     } 
 
     update () {
@@ -163,8 +160,8 @@ class Juego extends Phaser.Scene {
     }
 
     lista () {
-        console.log(this.objetos)
-
+        this.scene.pause('juego')
+        this.scene.add('inventario', Inventario, true, { objetos : this.objetosInstancia.objetosJugador });
     }
 
     movementKeys () {
@@ -178,7 +175,7 @@ class Juego extends Phaser.Scene {
             this.player.setFlipX(true);
             this.userContainer.body.velocity.x =-300;
             
-       
+
         } else if (this.cursors.right.isDown) {
             this.player.setFlipX(false);
             this.userContainer.body.velocity.x =300;
@@ -235,7 +232,7 @@ class Juego extends Phaser.Scene {
             console.log(this.gems,this.levelResistance,this.level)
 
             this.scene.pause('juego')
-            this.scene.add('seleccion', SeleccionObjeto, true, { objetos : this.objetos });
+            this.scene.add('seleccion', SeleccionObjeto, true, { instancia : this.objetosInstancia });
 
         }
     }
