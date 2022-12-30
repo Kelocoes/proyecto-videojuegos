@@ -20,11 +20,12 @@ class SeleccionObjeto extends Phaser.Scene {
         this.graphics = this.add.graphics();
         this.graphics.lineStyle(2, 0xffffff);
 
-        this.random()
+        // console.log(data)
+        this.random(data)
 
         this.input.on('gameobjectdown', function (pointer, gameObject) {
-            console.log(gameObject.name)
-            data.objetos.push(gameObject.name)
+            // console.log(gameObject.name)
+            data.instancia.updateObjetosJugador(gameObject.name)
             self.scene.resume('juego')
             self.scene.remove('seleccion')
         });
@@ -40,33 +41,26 @@ class SeleccionObjeto extends Phaser.Scene {
         });
     } 
 
-    random() {
+    random(data) {
 
-        this.objetos = [
-            {  
-                levelMax: 5,
-                title: 'Arma1',
-                description: 'Desc1',
-            }, 
-            {  
-                levelMax: 4,
-                title: 'Arma2',
-                description: 'Desc2',
-            },
-            {  
-                levelMax: 3,
-                title: 'Arma3',
-                description: 'Desc3',
-            }
-        ]
+        this.objetos = data.instancia.objetos
 
         this.objetos.sort( () => Math.random() - 0.5)
 
-        for (let i = 0; i < this.objetos.length; i++) {
-            this.add.text(250,150 + i * 70, this.objetos[i].title, { fontFamily : 'neuepixelsans', fill: '#000000'}).setFontSize(25)
-            this.add.text(250,185 + i * 70, this.objetos[i].description, { fontFamily : 'neuepixelsans', fill: '#000000'}).setFontSize(15)
-            this.zones.push(this.add.zone(245, 150 + i * 70, 270, 60).setOrigin(0).setName({ objetos : this.objetos[i], pos: i}).setInteractive().setRectangleDropZone( 270, 60))
+        var cantObjetos;
+        if (this.objetos.length > 3) {
+            cantObjetos = 3
+        } else {
+            cantObjetos = this.objetos.length
+        }
+
+        for (let i = 0; i < cantObjetos; i++) {
+            this.add.text(250,150 + i * 70, this.objetos[i][0].title, { fontFamily : 'neuepixelsans', fill: '#000000'}).setFontSize(25)
+            this.add.text(250,185 + i * 70, this.objetos[i][0].description, { fontFamily : 'neuepixelsans', fill: '#000000'}).setFontSize(15)
+            this.zones.push(this.add.zone(245, 150 + i * 70, 270, 60).setOrigin(0).setName({ id : this.objetos[i][0].id, pos: i}).setInteractive().setRectangleDropZone( 270, 60))
             this.graphics.strokeRect(this.zones[i].x , this.zones[i].y , this.zones[i].input.hitArea.width, this.zones[i].input.hitArea.height)
         }
     }
+
+
 }

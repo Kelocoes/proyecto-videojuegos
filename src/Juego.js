@@ -110,7 +110,7 @@ class Juego extends Phaser.Scene {
         this.timeText = this.add.text(20,20, this.gameTime, { fontFamily : 'pixelicWar', fill: '#ffffff'}).setFontSize(45).setScrollFactor(0);
 
 
-        this.levelNumber = this.add.text(720,20, this.level, { fontFamily : 'pixelicWar', fill: '#1944c9'}).setFontSize(45).setScrollFactor(0);
+        this.levelNumber = this.add.text(720,20, this.level, { fontFamily : 'pixelicWar', fill: '#ffffff'}).setFontSize(45).setScrollFactor(0);
         this.exp = new expBar(this,450,33,this.levelResistance, this.gems)
 
         this.addGems(950,950)
@@ -162,6 +162,9 @@ class Juego extends Phaser.Scene {
         // Creacion de arma (s)
         this.aparecerCuchillo()
     }
+        
+        this.objetosInstancia = new Objetos() 
+    } 
 
     update () {
         this.movementKeys()
@@ -190,8 +193,8 @@ class Juego extends Phaser.Scene {
     }
 
     lista () {
-        console.log(this.objetos)
-
+        this.scene.pause('juego')
+        this.scene.add('inventario', Inventario, true, { objetos : this.objetosInstancia.objetosJugador });
     }
 
     movementKeys () {
@@ -211,6 +214,8 @@ class Juego extends Phaser.Scene {
             this.userContainer.body.velocity.x =-300;
             this.direction['horizontal'] = -1
             this.directionLog = 'left'
+            
+
         } else if (this.cursors.right.isDown) {
             this.player.setFlipX(false);
             this.userContainer.body.velocity.x =300;
@@ -239,9 +244,7 @@ class Juego extends Phaser.Scene {
             this.gameTimeMin += 1
             //this.scene.pause('juego')
             //this.scene.launch('seleccion')
-        } else if (this.gameTimeSec === 3) {
-            this.scene.pause('juego')
-            this.scene.add('seleccion', SeleccionObjeto, true, { objetos : this.objetos });
+
         }
 
         this.timeText.setText(this.gameTimeMin +' : '+ this.gameTimeSec)
@@ -260,7 +263,6 @@ class Juego extends Phaser.Scene {
         this.gems = this.gems + 1
 
         this.exp.updateBar(this.gems, this.levelResistance)
-        console.log(this.gems)
     }
 
     levelUp(){
@@ -274,6 +276,9 @@ class Juego extends Phaser.Scene {
             this.exp.updateBar(this.gems, this.levelResistance)
 
             console.log(this.gems,this.levelResistance,this.level)
+
+            this.scene.pause('juego')
+            this.scene.add('seleccion', SeleccionObjeto, true, { instancia : this.objetosInstancia });
 
         }
     }
