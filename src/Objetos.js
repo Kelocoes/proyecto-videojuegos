@@ -2,51 +2,96 @@ class Objetos {
     
     constructor () {
         this.flag = true
-        this.objetosJugador = [[],[]]
+        this.objetosJugador = [[], []]
         this.objetos = [
             [
                 {   id: 1,  
+                    name: 'cuchillo',
                     title: 'Pata`e cabra I',
                     description: 'Pega acuchilladas',
+                    dano: 25,
+                    status: true,
+                    velocidad: 400,
+                    spawningVel: 1000,
                 },
                 {   id: 1,  
+                    name: 'cuchillo',
                     title: 'Pata`e cabra II',
-                    description: 'Reduce el tiempo del acuchillado',
+                    description: 'Aumenta dano de acuchillado',
+                    dano: 70,
+                    status: true,
+                    velocidad: 400,
+                    spawningVel: 1000,
                 },
                 {  
                     id: 1,
+                    name: 'cuchillo',
                     title: 'Pata`e cabra III',
-                    description: 'Aumenta 1 proyectil',
+                    description: 'Más achuchilladas',
+                    dano: 70,
+                    status: true,
+                    velocidad: 400,
+                    spawningVel: 700,
                 },
             ],
             [
                 {   id: 2,  
+                    name: 'papabomba',
                     title: 'Papa Bomba I',
-                    description: 'Pega acuchilladas',
+                    description: 'Lanza papas bomba',
+                    dano: 20,
+                    status: true,
+                    velocidad: 400,
+                    spawningVel: 1500,
                 },
                 {   id: 2,  
+                    name: 'papabomba',
                     title: 'Papa Bomba II',
-                    description: 'Reduce el tiempo del acuchillado',
+                    description: 'Aumenta el daño',
+                    dano: 50,
+                    status: true,
+                    velocidad: 400,
+                    spawningVel: 1500,
                 },
                 {  
                     id: 2,
                     title: 'Papa Bomba III',
-                    description: 'Aumenta 1 proyectil',
+                    description: 'Reduce el tiempo de lanzamiento',
+                    name: 'papabomba',
+                    dano: 50,
+                    status: true,
+                    velocidad: 400,
+                    spawningVel: 1000,
                 },
             ],
             [
                 {   id: 3,  
+                    name: 'molotov',
                     title: 'Molotov I',
-                    description: 'Pega acuchilladas',
+                    description: 'Para quemar el pais',
+                    dano: 20,
+                    status: true,
+                    velocidad: 300,
+                    spawningVel: 2000,
                 },
                 {   id: 3,  
+                    name: 'molotov',
                     title: 'Molotov II',
-                    description: 'Reduce el tiempo del acuchillado',
+                    description: 'Reduce tiempo de lanzamiento',
+                    dano: 20,
+                    status: true,
+                    velocidad: 300,
+                    spawningVel: 1800,
                 },
                 {  
                     id: 3,
+                    name: 'molotov',
                     title: 'Molotov III',
-                    description: 'Aumenta 1 proyectil',
+                    description: 'Reduce tiempo de lanzamiento',
+                    dano: 20,
+                    status: true,
+                    velocidad: 300,
+                    spawningVel: 1500,
                 },
             ],
         ]
@@ -85,6 +130,7 @@ class Objetos {
         } 
         // console.log('Objetos jugador',this.objetosJugador)
         // console.log('Objetos restantes',this.objetos)
+        
     }
 
     guardarObjetosJugador(objetoAIngresar){

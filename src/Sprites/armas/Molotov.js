@@ -1,4 +1,4 @@
-class Cuchillo extends Phaser.Physics.Arcade.Sprite {
+class Molotov extends Phaser.Physics.Arcade.Sprite {
     constructor (scene, x , y) {
         /*
         super ({
@@ -6,7 +6,7 @@ class Cuchillo extends Phaser.Physics.Arcade.Sprite {
         }
         */
 
-        super(scene, x, y, 'cuchillo');
+        super(scene, x, y, 'molotov');
     }
 
     animation () {

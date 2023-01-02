@@ -11,8 +11,10 @@
         <script src="./src/SeleccionObjeto.js"></script>
         <script src= "./src/Sprites/base/Enemigo.js"></script>
         <script src= "./src/Sprites/enemigos/Taxi.js"></script>
-        <script src= "./src/Sprites/base/Weapon.js"></script>
+        <script src= "./src/Sprites/base/WeaponGroup.js"></script>
         <script src= "./src/Sprites/armas/Cuchillo.js"></script>
+        <script src= "./src/Sprites/armas/Papabomba.js"></script>
+        <script src= "./src/Sprites/armas/Molotov.js"></script>
     <body>
     <style media= "screen" type='text/css'>
         @font-face {
@@ -42,7 +44,7 @@
             physics: {
                 default: 'arcade',
                 arcade: {
-                    debug: false,
+                    debug: true,
                 },
             },
             scene: [menu, juego, ganar],

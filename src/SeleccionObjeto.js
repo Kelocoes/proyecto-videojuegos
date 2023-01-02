@@ -25,7 +25,13 @@ class SeleccionObjeto extends Phaser.Scene {
 
         this.input.on('gameobjectdown', function (pointer, gameObject) {
             // console.log(gameObject.name)
+            for(let i=0; i< data.scene.weapons.length ; i++) {
+                if (data.scene.weapons[i].length !== 0 ) {
+                    data.scene.weapons[i].destroy()
+                }
+            }
             data.instancia.updateObjetosJugador(gameObject.name)
+            data.scene.cargaDeObjetos()
             self.scene.resume('juego')
             self.scene.remove('seleccion')
         });

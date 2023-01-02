@@ -22,9 +22,9 @@ class Inventario extends Phaser.Scene {
 
         for (let i = 0; i < data.objetos.length; i++) {
             if (data.objetos[i].length !== 0) {
-                this.add.text(310,160 + i * 70, data.objetos[i][0].title, { fontFamily : 'neuepixelsans', fill: '#000000'}).setFontSize(25)
-                this.add.text(310,185 + i * 70, data.objetos[i][0].description, { fontFamily : 'neuepixelsans', fill: '#000000'}).setFontSize(15)
-                this.zones.push(this.add.zone(300, 160 + i * 70, 220, 50).setOrigin(0).setName({ id : data.objetos[i][0].id, pos: i}).setRectangleDropZone( 220, 50))
+                this.add.text(310,160 + i * 70, data.objetos[i][data.objetos[i].length - 1].title, { fontFamily : 'neuepixelsans', fill: '#000000'}).setFontSize(25)
+                this.add.text(310,185 + i * 70, data.objetos[i][data.objetos[i].length - 1].description, { fontFamily : 'neuepixelsans', fill: '#000000'}).setFontSize(15)
+                this.zones.push(this.add.zone(300, 160 + i * 70, 220, 50).setOrigin(0).setName({ id : data.objetos[i][data.objetos[i].length - 1].id, pos: i}).setRectangleDropZone( 220, 50))
                 this.graphics.strokeRect(this.zones[i].x , this.zones[i].y , this.zones[i].input.hitArea.width, this.zones[i].input.hitArea.height)
             }
         }
