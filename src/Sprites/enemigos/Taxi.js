@@ -2,8 +2,8 @@ class Taxi extends Enemigo {
     constructor (config) {
         super ({
             ...config,
-            maxHP: 500,
-            velocidad: 200,
+            maxHP: 50,
+            velocidad: 45,
             dano: 0.1
         })
 
