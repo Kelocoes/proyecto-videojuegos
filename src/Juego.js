@@ -24,7 +24,7 @@ class Juego extends Phaser.Scene {
         //Exp variables
         this.gems = 0
         this.level = 1
-        this.levelResistance = 10
+        this.levelResistance = 7
         this.exp = undefined
         this.objetos = [];
 
@@ -41,6 +41,7 @@ class Juego extends Phaser.Scene {
 
         this.weaponsListInstances = [,Cuchillo, Papabomba, Molotov]
 
+        this.musica = undefined;
 
     }
 
@@ -55,12 +56,19 @@ class Juego extends Phaser.Scene {
         this.load.spritesheet('user','assets/img/player/Capuchirri.png',{frameWidth: 128,frameHeight:130,endFrame:1})
         this.load.image('bag', 'assets/img/scene/bag.png')
         this.load.image('taxi', 'assets/img/player/taxi.png')
+        this.load.image('policia', 'assets/img/player/police.png')
+        this.load.image('skeleton', 'assets/img/player/skeleton.png')
+        this.load.image('esmad', 'assets/img/player/esmad.png')
         this.load.image('cuchillo', 'assets/img/weapons/knife.png')
         this.load.image('papabomba', 'assets/img/weapons/papabomba.png')
         this.load.image('molotov', 'assets/img/weapons/molotov.png')
+
+        this.load.audio('cali', 'assets/sounds/cali.mp3')
     }
 
     create () {
+        this.musica = this.sound.add('cali')
+        this.musica.play()
         //Se crea la camara con posicion x, y, width y height bounds
         this.cameras.main.setBounds(0, 0, this.worldSizeWidth, this.worldSizeHeigth);
         //Se crea los bordes del mundo x, y, width y height
@@ -117,28 +125,28 @@ class Juego extends Phaser.Scene {
         //Se asigna scrollFactor 0 para no mover el texto con la camara
 
 
-        this.addGems(950,950,this)
-        this.addGems(900,900, this)
-        this.addGems(850,850, this)
-        this.addGems(800,800, this)
-        this.addGems(750,750, this)
-        this.addGems(700,700, this)
-        this.addGems(600,600, this)
-        this.addGems(650,650, this)
-        this.addGems(500,500, this)
-        this.addGems(550,550, this)
+        //this.addGems(950,950,this)
+        //this.addGems(900,900, this)
+        //this.addGems(850,850, this)
+        //this.addGems(800,800, this)
+        //this.addGems(750,750, this)
+        //this.addGems(700,700, this)
+        //this.addGems(600,600, this)
+        //this.addGems(650,650, this)
+        //this.addGems(500,500, this)
+        //this.addGems(550,550, this)
 
-        this.addGems(1950,1950, this)
-        this.addGems(1900,1900, this)
-        this.addGems(1850,1850, this)
-        this.addGems(1800,1800, this)
-        this.addGems(1750,1750, this)
-        this.addGems(1700,1700, this)
-        this.addGems(1600,1600, this)
-        this.addGems(1650,1650, this)
-        this.addGems(1500,1500, this)
-        this.addGems(1550,1550, this)
-        this.addGems(1450,1450, this)
+        // this.addGems(1950,1950, this)
+        // this.addGems(1900,1900, this)
+        // this.addGems(1850,1850, this)
+        // this.addGems(1800,1800, this)
+        // this.addGems(1750,1750, this)
+        // this.addGems(1700,1700, this)
+        // this.addGems(1600,1600, this)
+        // this.addGems(1650,1650, this)
+        // this.addGems(1500,1500, this)
+        // this.addGems(1550,1550, this)
+        // this.addGems(1450,1450, this)
 
         this.buttonH = this.add.image(770,570, 'bag').setScrollFactor(0)
         this.buttonH.setScale(0.1)
@@ -184,16 +192,15 @@ class Juego extends Phaser.Scene {
         this.movementKeys()
         this.enemigosSigue()
         this.levelUp()
-        // this.animacionesArmas()
+        this.animacionesArmas()
 
     }
     
     cargaDeObjetos(){
         this.weapons = []
         for (let i = 0; i < this.objetosInstancia.objetosJugador.length; i ++) {
-            this.weapons.push([])
             if (this.objetosInstancia.objetosJugador[i].length !== 0) {
-                this.weapons[i] = new WeaponGroup({
+                this.weapons.push(new WeaponGroup({
                     scene: this, 
                     posx: this.userContainer.x + 20, 
                     posy: this.userContainer.y, 
@@ -203,18 +210,18 @@ class Juego extends Phaser.Scene {
                     velocidad: this.objetosInstancia.objetosJugador[i][this.objetosInstancia.objetosJugador[i].length - 1].velocidad, 
                     spawningVel: this.objetosInstancia.objetosJugador[i][this.objetosInstancia.objetosJugador[i].length - 1].spawningVel,
                     enemigos: this.enemigos, 
-                    weaponType: this.weaponsListInstances[this.objetosInstancia.objetosJugador[i][this.objetosInstancia.objetosJugador[i].length - 1].id]})
+                    weaponType: this.weaponsListInstances[this.objetosInstancia.objetosJugador[i][this.objetosInstancia.objetosJugador[i].length - 1].id]}))
                 this.weapons[i].fire()
             }
         }
-        
-        
     }
 
 
     animacionesArmas() {
-        for (let i = 0; i < this.weapons.getChildren().length; i++) {
-            this.weapons.getChildren()[i].animation()
+        for (let j = 0; j < this.weapons.length; j ++ ){
+            for (let i = 0; i < this.weapons[j].getChildren().length; i++) {
+                this.weapons[j].getChildren()[i].animation()
+            }
         }
     }
 
@@ -229,8 +236,9 @@ class Juego extends Phaser.Scene {
 
     lista () {
         console.log(this.objetosInstancia.objetosJugador)
+        this.musica.pause()
         this.scene.pause('juego')
-        this.scene.add('inventario', Inventario, true, { objetos : this.objetosInstancia.objetosJugador });
+        this.scene.add('inventario', Inventario, true, { objetos : this.objetosInstancia.objetosJugador, scene: this });
     }
 
     movementKeys () {
@@ -274,15 +282,16 @@ class Juego extends Phaser.Scene {
 
     addTime(){
         this.gameTimeSec += 1;
-        // console.log(this.gameTimeSec)
+        //console.log(this.gameTimeSec)
+        //console.log(this.gameTimeMin)
         if (this.gameTimeSec > 59) {
             this.gameTimeSec = 0
             this.gameTimeMin += 1
-            //this.scene.pause('juego')
-            //this.scene.launch('seleccion')
-
-        } else if (this.gameTimeMin > 5) {
-            this.scene.start('ganar')
+            console.log(this.gameTimeMin)
+            if (this.gameTimeMin >= 5) {
+                console.log("Cambio de escena")
+                this.scene.start('ganar')
+            }
         }
 
         this.timeText.setText(this.gameTimeMin +' : '+ this.gameTimeSec)
@@ -304,7 +313,7 @@ class Juego extends Phaser.Scene {
     }
 
     levelUp(){
-        if(this.gems === this.levelResistance){
+        if(this.gems >= this.levelResistance){
 
             this.gems = 0
             this.levelResistance = Math.ceil(this.levelResistance + this.levelResistance*0.05)
@@ -314,9 +323,12 @@ class Juego extends Phaser.Scene {
             this.exp.updateBar(this.gems, this.levelResistance)
 
             console.log(this.gems,this.levelResistance,this.level)
-
-            this.scene.pause('juego')
-            this.scene.add('seleccion', SeleccionObjeto, true, { instancia : this.objetosInstancia, scene: this});
+            
+            if (this.objetosInstancia.objetos.length !== 0) {
+                this.musica.pause()
+                this.scene.pause('juego')
+                this.scene.add('seleccion', SeleccionObjeto, true, { instancia : this.objetosInstancia, scene: this});
+            }
 
         }
     }
@@ -325,9 +337,11 @@ class Juego extends Phaser.Scene {
     {
         this.healthValue -= amount;
 
-        if (this.healthValue < 0)
+        if (this.healthValue <= 0)
         {
             this.healthValue = 0;
+            this.musica.stop()
+            this.scene.start('perder')
         }
 
         this.drawHB();
@@ -374,6 +388,7 @@ class Juego extends Phaser.Scene {
         let spawnX = 0
         let spawnY = 0
 
+        let skins = ['taxi', 'policia', 'skeleton', 'esmad']
         //let flag = false
 
         let side = Math.floor(Math.random() * (4 - 1 + 1)) + 1
@@ -382,7 +397,7 @@ class Juego extends Phaser.Scene {
             spawnY = Math.floor(Math.random() * (worldHeigth - (coorY + 325) + 1)) + coorY + 325
             spawnX = Math.floor(Math.random() * (worldWidth - 0 + 1)) + 0
             for (let i = 0; i < this.numOleada; i++){
-                let taxi = new Taxi({scene: this, posx: spawnX + i*100, posy: spawnY + i*100, key: 'taxi'})
+                let taxi = new Taxi({scene: this, posx: spawnX + i*100, posy: spawnY + i*100, key: skins[Math.floor(Math.random() * (skins.length -1 - 0 + 1)) + 0]})
                 this.enemigos.add(taxi);
             }
             //flag = true
@@ -392,7 +407,7 @@ class Juego extends Phaser.Scene {
             spawnY = Math.floor(Math.random() * (worldHeigth - 0 + 1)) + 0
             spawnX = Math.floor(Math.random() * (worldWidth - (coorX + 425) + 1)) + coorX + 425
             for (let i = 0; i < this.numOleada; i++){
-                let taxi = new Taxi({scene: this, posx: spawnX + i*100, posy: spawnY - i*100 , key: 'taxi'})
+                let taxi = new Taxi({scene: this, posx: spawnX + i*100, posy: spawnY - i*100 , key: skins[Math.floor(Math.random() * (skins.length - 1 - 0 + 1)) + 0]})
                 this.enemigos.add(taxi);
             }
             //flag = true
@@ -402,7 +417,7 @@ class Juego extends Phaser.Scene {
             spawnY = Math.floor(Math.random() * (worldHeigth - 0 + 1)) + 0
             spawnX = Math.floor(Math.random() * ((coorX - 425) - 0  + 1)) + 0
             for (let i = 0; i < this.numOleada; i++){
-                let taxi = new Taxi({scene: this, posx: spawnX - i*100 , posy: spawnY + i*100 , key: 'taxi'})
+                let taxi = new Taxi({scene: this, posx: spawnX - i*100 , posy: spawnY + i*100 , key: skins[Math.floor(Math.random() * (skins.length -1 - 0 + 1)) + 0]})
                 this.enemigos.add(taxi);
             }
             //flag = true
@@ -412,7 +427,7 @@ class Juego extends Phaser.Scene {
             spawnY = Math.floor(Math.random() * ((coorY - 325) - 0 + 1)) + 0
             spawnX = Math.floor(Math.random() * (worldWidth - 0 + 1)) + 0
             for (let i = 0; i < this.numOleada; i++){
-                let taxi = new Taxi({scene: this, posx: spawnX + i*100, posy: spawnY - i*100, key: 'taxi'})
+                let taxi = new Taxi({scene: this, posx: spawnX + i*100, posy: spawnY - i*100, key: skins[Math.floor(Math.random() * (skins.length -1 - 0 + 1)) + 0]})
                 this.enemigos.add(taxi);
             }
             //flag = true

@@ -83,7 +83,6 @@ class WeaponGroup extends Phaser.Physics.Arcade.Group{
 
     setSpawningVel (value) {
         this.spawningVel = value;
-
     }
 
 }

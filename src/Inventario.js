@@ -31,6 +31,7 @@ class Inventario extends Phaser.Scene {
 
         this.input.keyboard.on('keydown-ESC', function (event) {
             self.scene.resume('juego')
+            data.scene.musica.resume()
             self.scene.remove('inventario')
         });
     }   

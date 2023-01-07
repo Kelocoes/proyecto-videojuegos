@@ -32,6 +32,7 @@ class SeleccionObjeto extends Phaser.Scene {
             }
             data.instancia.updateObjetosJugador(gameObject.name)
             data.scene.cargaDeObjetos()
+            data.scene.musica.resume()
             self.scene.resume('juego')
             self.scene.remove('seleccion')
         });

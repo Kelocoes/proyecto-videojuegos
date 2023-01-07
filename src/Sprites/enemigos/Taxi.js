@@ -2,9 +2,9 @@ class Taxi extends Enemigo {
     constructor (config) {
         super ({
             ...config,
-            maxHP: 50,
-            velocidad: 45,
-            dano: 0.1
+            maxHP: 70,
+            velocidad: 200,
+            dano: 0.3
         })
 
         this.body.setSize(200, 200);
