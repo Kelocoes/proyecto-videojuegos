@@ -48,7 +48,7 @@ class Enemigo extends Phaser.Physics.Arcade.Sprite {
     dmg_animation() {
         const startColor  = Phaser.Display.Color.ValueToColor(0xffffff) // blanco
         const endColor = Phaser.Display.Color.ValueToColor(0xff0000) // rojo
-        config.scene[1].tweens.addCounter({
+        config.scene[2].tweens.addCounter({
             from: 0,
             to: 100,
             duration: 100,
