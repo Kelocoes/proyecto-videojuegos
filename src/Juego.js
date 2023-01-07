@@ -37,7 +37,9 @@ class Juego extends Phaser.Scene {
         this.numOleada = 5
 
         // grupo de armas en el juego
-        this.weapons = undefined;
+        this.weapons = [];
+
+        this.weaponsListInstances = [,Cuchillo, Papabomba, Molotov]
 
 
     }
@@ -49,11 +51,13 @@ class Juego extends Phaser.Scene {
 
     preload () {
         this.load.image('gem','assets/img/scene/diamond.png')
-        this.load.image('piso', 'assets/img/scene/floorTile2.png');
+        this.load.image('piso', 'assets/img/scene/floorTile2.png')
         this.load.spritesheet('user','assets/img/player/Capuchirri.png',{frameWidth: 128,frameHeight:130,endFrame:1})
         this.load.image('bag', 'assets/img/scene/bag.png')
-        this.load.image('taxi', 'assets/img/player/taxi.png');
+        this.load.image('taxi', 'assets/img/player/taxi.png')
         this.load.image('cuchillo', 'assets/img/weapons/knife.png')
+        this.load.image('papabomba', 'assets/img/weapons/papabomba.png')
+        this.load.image('molotov', 'assets/img/weapons/molotov.png')
     }
 
     create () {
@@ -113,35 +117,37 @@ class Juego extends Phaser.Scene {
         //Se asigna scrollFactor 0 para no mover el texto con la camara
 
 
-        // this.addGems(950,950,this)
-        // this.addGems(900,900, this)
-        // this.addGems(850,850, this)
-        // this.addGems(800,800, this)
-        // this.addGems(750,750, this)
-        // this.addGems(700,700, this)
-        // this.addGems(600,600, this)
-        // this.addGems(650,650, this)
-        // this.addGems(500,500, this)
-        // this.addGems(550,550, this)
+        this.addGems(950,950,this)
+        this.addGems(900,900, this)
+        this.addGems(850,850, this)
+        this.addGems(800,800, this)
+        this.addGems(750,750, this)
+        this.addGems(700,700, this)
+        this.addGems(600,600, this)
+        this.addGems(650,650, this)
+        this.addGems(500,500, this)
+        this.addGems(550,550, this)
 
-        // this.addGems(1950,1950, this)
-        // this.addGems(1900,1900, this)
-        // this.addGems(1850,1850, this)
-        // this.addGems(1800,1800, this)
-        // this.addGems(1750,1750, this)
-        // this.addGems(1700,1700, this)
-        // this.addGems(1600,1600, this)
-        // this.addGems(1650,1650, this)
-        // this.addGems(1500,1500, this)
-        // this.addGems(1550,1550, this)
-        // this.addGems(1450,1450, this)
+        this.addGems(1950,1950, this)
+        this.addGems(1900,1900, this)
+        this.addGems(1850,1850, this)
+        this.addGems(1800,1800, this)
+        this.addGems(1750,1750, this)
+        this.addGems(1700,1700, this)
+        this.addGems(1600,1600, this)
+        this.addGems(1650,1650, this)
+        this.addGems(1500,1500, this)
+        this.addGems(1550,1550, this)
+        this.addGems(1450,1450, this)
 
         this.buttonH = this.add.image(770,570, 'bag').setScrollFactor(0)
         this.buttonH.setScale(0.1)
         this.buttonH.setInteractive()
         this.buttonH.on('pointerdown', () => this.lista())
 
+        
         this.enemigos = this.physics.add.group()
+        
         // Spawn de enemigo: Taxi: Aqui deberian spawnearse todos los enemigos
         // for (let i = 0; i < 5; i++) {
         //     let taxi = new Taxi({scene: this, posx: 1000+ (i*100), posy: 1000+ (i*100), key: 'taxi'})
@@ -160,16 +166,16 @@ class Juego extends Phaser.Scene {
         // this.userContainer.add(this.weapon)
 
         this.objetosInstancia = new Objetos() 
+        this.objetosInstancia.updateObjetosJugador({ id : 1})
+        this.cargaDeObjetos()
 
-
-        this.weapons = this.physics.add.group()
-        // Creacion de arma (s)
-        this.aparecerCuchillo()
 
         this.timeText = this.add.text(20,20, this.gameTime, { fontFamily : 'pixelicWar', fill: '#ffffff'}).setFontSize(45).setScrollFactor(0);
 
         this.levelNumber = this.add.text(720,20, this.level, { fontFamily : 'pixelicWar', fill: '#ffffff'}).setFontSize(45).setScrollFactor(0);
         this.exp = new expBar(this,450,33,this.levelResistance, this.gems)
+        // Creacion de arma (s)
+        //this.aparecerCuchillo()
         this.spawnEnemies()
 
     } 
@@ -178,20 +184,33 @@ class Juego extends Phaser.Scene {
         this.movementKeys()
         this.enemigosSigue()
         this.levelUp()
-        this.animacionesArmas()
+        // this.animacionesArmas()
+
+    }
+    
+    cargaDeObjetos(){
+        this.weapons = []
+        for (let i = 0; i < this.objetosInstancia.objetosJugador.length; i ++) {
+            this.weapons.push([])
+            if (this.objetosInstancia.objetosJugador[i].length !== 0) {
+                this.weapons[i] = new WeaponGroup({
+                    scene: this, 
+                    posx: this.userContainer.x + 20, 
+                    posy: this.userContainer.y, 
+                    key: this.objetosInstancia.objetosJugador[i][this.objetosInstancia.objetosJugador[i].length - 1].name, 
+                    dano: this.objetosInstancia.objetosJugador[i][this.objetosInstancia.objetosJugador[i].length - 1].dano, 
+                    status: this.objetosInstancia.objetosJugador[i][this.objetosInstancia.objetosJugador[i].length - 1].status, 
+                    velocidad: this.objetosInstancia.objetosJugador[i][this.objetosInstancia.objetosJugador[i].length - 1].velocidad, 
+                    spawningVel: this.objetosInstancia.objetosJugador[i][this.objetosInstancia.objetosJugador[i].length - 1].spawningVel,
+                    enemigos: this.enemigos, 
+                    weaponType: this.weaponsListInstances[this.objetosInstancia.objetosJugador[i][this.objetosInstancia.objetosJugador[i].length - 1].id]})
+                this.weapons[i].fire()
+            }
+        }
+        
+        
     }
 
-    // Mecanica del cuchillo
-    aparecerCuchillo(){
-        let cuchillo = new Cuchillo({scene: this, posx: this.userContainer.x + 20, posy: this.userContainer.y, key: 'cuchillo' })
-        this.weapons.add(cuchillo)
-        cuchillo.setVelocityX(this.direction['horizontal'] * cuchillo.getVelocidad());
-        cuchillo.setVelocityY(this.direction['vertical'] * cuchillo.getVelocidad());
-        //this.time.delayedCall(1000, ()=> {weapon.destroy; this.aparecerArma}, [], this);
-        this.time.delayedCall(cuchillo.getSpawningVel(), this.aparecerCuchillo, [], this);
-        //Revisa si el arma y el enemigo se superponen. Dado el caso, resta puntos de vida al enemigo
-        this.physics.add.overlap(cuchillo, this.enemigos,(weapon, enemy)=>{ cuchillo.destroy(); enemy.recibirDano(cuchillo.getDano(), this.addGems, this)}, null, this)
-    }
 
     animacionesArmas() {
         for (let i = 0; i < this.weapons.getChildren().length; i++) {
@@ -209,6 +228,7 @@ class Juego extends Phaser.Scene {
     }
 
     lista () {
+        console.log(this.objetosInstancia.objetosJugador)
         this.scene.pause('juego')
         this.scene.add('inventario', Inventario, true, { objetos : this.objetosInstancia.objetosJugador });
     }
@@ -296,7 +316,7 @@ class Juego extends Phaser.Scene {
             console.log(this.gems,this.levelResistance,this.level)
 
             this.scene.pause('juego')
-            this.scene.add('seleccion', SeleccionObjeto, true, { instancia : this.objetosInstancia });
+            this.scene.add('seleccion', SeleccionObjeto, true, { instancia : this.objetosInstancia, scene: this});
 
         }
     }
