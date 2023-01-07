@@ -29,16 +29,22 @@ class Juego extends Phaser.Scene {
         this.objetos = [];
 
         // Variables de direccion: -1-> arriba, izquierda || 1 -> derecha, abajo || 0 -> No se ha tocado del boton
-        this.direction = {'vertical' : 0, 'horizontal': 0}
+        this.direction = {'vertical' : 0, 'horizontal': 1}
         this.directionLog = undefined;
 
         // grupo de enemigos
         this.enemigos = undefined;
+        this.numOleada = 5
 
         // grupo de armas en el juego
         this.weapons = undefined;
 
+
     }
+
+    // Circulo 
+    // callback(4000 - tiempo  , 20)
+    // TiempoSpawn  - Tiempo  
 
 
     preload () {
@@ -137,10 +143,10 @@ class Juego extends Phaser.Scene {
 
         this.enemigos = this.physics.add.group()
         // Spawn de enemigo: Taxi: Aqui deberian spawnearse todos los enemigos
-        for (let i = 0; i < 5; i++) {
-            let taxi = new Taxi({scene: this, posx: 1000+ (i*100), posy: 1000+ (i*100), key: 'taxi'})
-            this.enemigos.add(taxi);
-        }
+        // for (let i = 0; i < 5; i++) {
+        //     let taxi = new Taxi({scene: this, posx: 1000+ (i*100), posy: 1000+ (i*100), key: 'taxi'})
+        //     this.enemigos.add(taxi);
+        // }
 
         //Revisa si el jugador y el enemigo se superponen. Dado el caso, resta puntos de vida.
         this.physics.add.overlap(this.userContainer, this.enemigos,(userContainer,enemy)=>{ console.log("auch"); this.decreaseHB(enemy.getDano())}, null, this  )
@@ -164,6 +170,8 @@ class Juego extends Phaser.Scene {
 
         this.levelNumber = this.add.text(720,20, this.level, { fontFamily : 'pixelicWar', fill: '#ffffff'}).setFontSize(45).setScrollFactor(0);
         this.exp = new expBar(this,450,33,this.levelResistance, this.gems)
+        this.spawnEnemies()
+
     } 
 
     update () {
@@ -332,6 +340,85 @@ class Juego extends Phaser.Scene {
         var d = Math.floor(this.p * this.healthValue);
 
         this.healthBar.fillRect(this.healthBarX + 2, this.healthBarY + 2, d, 8);
+    }
+    // callback(4000, () => {for }spawnEnemies())
+    spawnEnemies()
+    {
+        this.numOleada = Math.ceil(this.numOleada + this.numOleada*0.05)
+        const worldHeigth =  this.worldSizeHeigth
+        const worldWidth = this.worldSizeWidth
+
+        let coorX = this.userContainer.x
+        let coorY = this.userContainer.y
+
+        let spawnX = 0
+        let spawnY = 0
+
+        //let flag = false
+
+        let side = Math.floor(Math.random() * (4 - 1 + 1)) + 1
+
+        if(side === 1){ //abajo
+            spawnY = Math.floor(Math.random() * (worldHeigth - (coorY + 325) + 1)) + coorY + 325
+            spawnX = Math.floor(Math.random() * (worldWidth - 0 + 1)) + 0
+            for (let i = 0; i < this.numOleada; i++){
+                let taxi = new Taxi({scene: this, posx: spawnX + i*100, posy: spawnY + i*100, key: 'taxi'})
+                this.enemigos.add(taxi);
+            }
+            //flag = true
+            console.log('Abajo', spawnX,spawnY,this.numOleada)
+
+        }else if (side === 2){ // derecha
+            spawnY = Math.floor(Math.random() * (worldHeigth - 0 + 1)) + 0
+            spawnX = Math.floor(Math.random() * (worldWidth - (coorX + 425) + 1)) + coorX + 425
+            for (let i = 0; i < this.numOleada; i++){
+                let taxi = new Taxi({scene: this, posx: spawnX + i*100, posy: spawnY - i*100 , key: 'taxi'})
+                this.enemigos.add(taxi);
+            }
+            //flag = true
+            console.log('derecha', spawnX,spawnY,this.numOleada)
+
+        }else if(side === 3){ // izquierda
+            spawnY = Math.floor(Math.random() * (worldHeigth - 0 + 1)) + 0
+            spawnX = Math.floor(Math.random() * ((coorX - 425) - 0  + 1)) + 0
+            for (let i = 0; i < this.numOleada; i++){
+                let taxi = new Taxi({scene: this, posx: spawnX - i*100 , posy: spawnY + i*100 , key: 'taxi'})
+                this.enemigos.add(taxi);
+            }
+            //flag = true
+            console.log('izquierda', spawnX,spawnY,this.numOleada)
+
+        }else if (side === 4) { // arriba
+            spawnY = Math.floor(Math.random() * ((coorY - 325) - 0 + 1)) + 0
+            spawnX = Math.floor(Math.random() * (worldWidth - 0 + 1)) + 0
+            for (let i = 0; i < this.numOleada; i++){
+                let taxi = new Taxi({scene: this, posx: spawnX + i*100, posy: spawnY - i*100, key: 'taxi'})
+                this.enemigos.add(taxi);
+            }
+            //flag = true
+            console.log('arriba', spawnX,spawnY,this.numOleada)
+
+        }
+        // if (flag){
+        //     let taxi = new Taxi({scene: this, posx: spawnX, posy: spawnY, key: 'taxi'})
+        //     this.enemigos.add(taxi);
+        // }else {
+        //     //this.spawnEnemies()
+        // }
+
+
+
+
+        this.time.delayedCall(10000,this.spawnEnemies,[],this)
+
+        //Spanear por fuera
+ 
+
+        // // Spawn de enemigo: Taxi: Aqui deberian spawnearse todos los enemigos
+        // for (let i = 0; i < 5; i++) {
+        //     let taxi = new Taxi({scene: this, posx: 1000+ (i*100), posy: 1000+ (i*100), key: 'taxi'})
+        //     this.enemigos.add(taxi);
+        //}
     }
 
 }
