@@ -67,6 +67,8 @@ class Juego extends Phaser.Scene {
     }
 
     create () {
+        this.add.text(3000,3000, '', { fontFamily : 'neuepixelsans', fill: '#ffffff'}).setFontSize(45).setScrollFactor(0);
+
         this.musica = this.sound.add('cali')
         this.musica.play()
         //Se crea la camara con posicion x, y, width y height bounds

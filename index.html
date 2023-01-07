@@ -3,6 +3,7 @@
     <head>
         <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.1/dist/phaser-arcade-physics.min.js"></script>
         <script src="./src/expBar.js"></script>
+        <script src="./src/init.js"></script> 
         <script src="./src/Menu.js"></script> 
         <script src="./src/Objetos.js"></script> 
         <script src="./src/Juego.js"></script>
@@ -37,6 +38,7 @@
         var juego = new Juego();
         var ganar = new Ganar();
         var perder = new Perder();
+        var init = new Init();
 
         var config = {
             type: Phaser.AUTO,
@@ -49,7 +51,7 @@
                     debug: false,
                 },
             },
-            scene: [menu, juego, ganar, perder],
+            scene: [init, menu, juego, ganar, perder],
         };
 
         var game = new Phaser.Game(config);
